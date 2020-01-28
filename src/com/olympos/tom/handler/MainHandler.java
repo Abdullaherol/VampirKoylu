@@ -2,10 +2,12 @@ package com.olympos.tom.handler;
 
 import java.util.ArrayList;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -36,7 +38,7 @@ public class MainHandler implements Listener{
 					plugin.getLobbyGui().openYourLobbies(player);
 				}else plugin.getLobbyGui().openCreateLobby(player);
 			}else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("Join Lobby")) {
-				
+				plugin.getLobbyGui().openJoinLobbies(player);
 			}else {
 				
 			}
@@ -47,6 +49,15 @@ public class MainHandler implements Listener{
 			break;
 		case "Profile":
 			
+			break;
+		case "Join Lobby":
+			if (event.getClick()==ClickType.LEFT) {
+				//join this lobby
+				
+			}else if (event.getClick()==ClickType.RIGHT) {
+				//open players in the lobby
+			
+			}
 			break;
 		default:
 			if (event.getClickedInventory().getTitle().contains("Create Lobby")) {
@@ -64,6 +75,14 @@ public class MainHandler implements Listener{
 				}else if (event.getCurrentItem().getType()==Material.STAINED_GLASS_PANE) {
 					if (event.getCurrentItem().getItemMeta().getDisplayName()!=null) {
 						if (lobby.getSelectedRoles().size()!=lobby.getSize()) {
+							player.sendMessage(ChatColor.RED+"Selected roles must have the same Lobby size!");
+						}else if (lobby.getMap()==null) {
+							player.sendMessage(ChatColor.RED+"You have to choose a map!");
+						}else {
+							player.sendMessage(ChatColor.GREEN+"Successfully created the lobby.");
+							lobby.setReady(true);
+							plugin.getReadyLobbies().add(lobby);
+							player.closeInventory();
 							
 						}
 					}

@@ -1,6 +1,7 @@
 package com.olympos.tom.gui;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -39,8 +40,35 @@ public class LobbyGui {
 	public void openYourLobbies(Player player) {
 		Inventory inventory = Bukkit.createInventory(null, 27,"Your Lobbies");
 		for (int i = 0; i < plugin.getLobbies().get(player).size();i++) {
-			ItemStack itemStack = createItem("", 1, Material.STAINED_CLAY, false);
-			inventory.addItem(itemStack);
+			List<String> lores = new ArrayList<String>();
+			lores.add("§2Left Click to Edit");
+			lores.add("§4Right Click to Remove");
+			if (plugin.getLobbies().get(player).get(i).isReady()) {
+				ItemStack itemStack = createItem(" ", 1, Material.STAINED_CLAY,(byte)5, false,lores);
+				inventory.addItem(itemStack);
+			}else {
+				ItemStack itemStack = createItem(" ", 1, Material.STAINED_CLAY, false,lores);
+				inventory.addItem(itemStack);
+			}
+		}
+		player.openInventory(inventory);
+	}
+	
+	public void openJoinLobbies(Player player) {
+		Inventory inventory = Bukkit.createInventory(null, 27,"Join Lobby");
+		for (Lobby lobby : plugin.getReadyLobbies()) {
+			if (lobby.isStarted()) {
+				List<String> lore = new ArrayList<String>();
+				lore.add("§6Right Click to Shows Players");
+				ItemStack itemStack = createItem(" ", 1, Material.STAINED_CLAY, (byte)6, false, lore);
+				inventory.addItem(itemStack);
+			}else {
+				List<String> lore = new ArrayList<String>();
+				lore.add("§1Left Click to Join Lobby");
+				lore.add("§6Right Click to Shows Players");
+				ItemStack itemStack = createItem(" ", 1, Material.STAINED_CLAY, (byte)5, false, lore);
+				inventory.addItem(itemStack);
+			}
 		}
 		player.openInventory(inventory);
 	}
@@ -69,13 +97,13 @@ public class LobbyGui {
 		}
 		
 		for (int j = 3; j < 49;) {
-			ItemStack itemStack = createItem("", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
+			ItemStack itemStack = createItem(" ", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
 			
 			inventory.setItem(j, itemStack);
 			j +=9;
 		}
 		for (int j = 5; j < 51;) {
-			ItemStack itemStack = createItem("", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
+			ItemStack itemStack = createItem(" ", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
 			
 			inventory.setItem(j, itemStack);
 			j +=9;
@@ -85,7 +113,7 @@ public class LobbyGui {
 				ItemStack itemStack = createItem("Ready", 1, Material.STAINED_GLASS_PANE, false,(byte)5);
 				inventory.setItem(j, itemStack);
 			}else {
-				ItemStack itemStack = createItem("", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
+				ItemStack itemStack = createItem(" ", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
 				inventory.setItem(j, itemStack);
 			}
 			j +=9;
@@ -150,13 +178,13 @@ public class LobbyGui {
 		}
 		
 		for (int j = 3; j < 49;) {
-			ItemStack itemStack = createItem("", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
+			ItemStack itemStack = createItem(" ", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
 			
 			inventory.setItem(j, itemStack);
 			j +=9;
 		}
 		for (int j = 5; j < 51;) {
-			ItemStack itemStack = createItem("", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
+			ItemStack itemStack = createItem(" ", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
 			
 			inventory.setItem(j, itemStack);
 			j +=9;
@@ -166,7 +194,7 @@ public class LobbyGui {
 				ItemStack itemStack = createItem("Ready", 1, Material.STAINED_GLASS_PANE, false,(byte)5);
 				inventory.setItem(j, itemStack);
 			}else {
-				ItemStack itemStack = createItem("", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
+				ItemStack itemStack = createItem(" ", 1, Material.STAINED_GLASS_PANE, false,(byte)15);
 				inventory.setItem(j, itemStack);
 			}
 			j +=9;
@@ -227,6 +255,32 @@ public class LobbyGui {
 		ItemStack itemStack = new ItemStack(material,amount,type);
 		ItemMeta itemMeta = itemStack.getItemMeta();
 		itemMeta.setDisplayName(name);
+		if(enc) {
+			itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+			itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+		}
+		itemStack.setItemMeta(itemMeta);
+		return itemStack;
+		
+	}
+	private ItemStack createItem(String name,int amount,Material material,boolean enc,List<String> lores) {
+		ItemStack itemStack = new ItemStack(material,amount);
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		itemMeta.setDisplayName(name);
+		itemMeta.setLore(lores);
+		if(enc) {
+			itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+			itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+		}
+		itemStack.setItemMeta(itemMeta);
+		return itemStack;
+		
+	}
+	private ItemStack createItem(String name,int amount,Material material,byte type,boolean enc,List<String> lores) {
+		ItemStack itemStack = new ItemStack(material,amount,type);
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		itemMeta.setDisplayName(name);
+		itemMeta.setLore(lores);
 		if(enc) {
 			itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 			itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);

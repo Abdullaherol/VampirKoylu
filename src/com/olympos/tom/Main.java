@@ -20,6 +20,7 @@ public class Main extends JavaPlugin{
 	private HashMap<Player, TPlayer> players;
 	private HashMap<String, Map> maps;
 	private HashMap<Player, ArrayList<Lobby>> lobbies;
+	private ArrayList<Lobby> readyLobbies;
 	private LobbyGui lobbyGui;
 	
 	@Override
@@ -28,6 +29,7 @@ public class Main extends JavaPlugin{
 		maps = new HashMap<String, Map>();
 		lobbies = new HashMap<Player, ArrayList<Lobby>>();
 		lobbyGui = new LobbyGui(this);
+		readyLobbies = new ArrayList<Lobby>();
 		Bukkit.getServer().getPluginCommand("map").setExecutor(new CMap(this));
 		Bukkit.getServer().getPluginCommand("play").setExecutor(new CPlay(this));
 		Bukkit.getServer().getPluginManager().registerEvents(new MainHandler(this),this);
@@ -70,6 +72,14 @@ public class Main extends JavaPlugin{
 
 	public void setLobbyGui(LobbyGui lobbyGui) {
 		this.lobbyGui = lobbyGui;
+	}
+
+	public ArrayList<Lobby> getReadyLobbies() {
+		return readyLobbies;
+	}
+
+	public void setReadyLobbies(ArrayList<Lobby> readyLobbies) {
+		this.readyLobbies = readyLobbies;
 	}
 
 	
