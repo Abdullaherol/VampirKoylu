@@ -10,15 +10,12 @@ public enum Roles {
 	Bodyguard,
 	Doctor,
 	Escort,
-	Mayor,
 	Medium,
 	Godfather,
 	Mafia,
 	Blackmailer,
-	Consigliere,
 	Consort,
 	Jester,
-	SerialKiller,
 	Werewolf,
 	Vampire
 }

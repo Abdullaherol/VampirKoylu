@@ -1,13 +1,9 @@
 package com.olympos.tom.object;
 
+import com.olympos.tom.lobby.Lobby;
 
 public class TPlayer {
 	
-	
-	private  void name() {
-		
-	}
-	
-	
+	private Lobby activeLobby;
 	
 }

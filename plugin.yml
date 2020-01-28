@@ -1,0 +1,7 @@
+name: TownofMinecraft
+version: 0.01
+author: Liftedplane
+main: com.olympos.tom.Main
+commands:
+  map:
+  play:
