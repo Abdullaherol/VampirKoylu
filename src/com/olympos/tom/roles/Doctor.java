@@ -11,11 +11,11 @@ import com.olympos.tom.properties.Side;
 
 public class Doctor extends ARole{
 	
-
 	
+
 	public Doctor(int no, Roles role, Chat chat, Dead deadType, Side side, boolean dead, boolean blocked,
-			boolean jailed, TPlayer targetPlayer, RoleType roleType, TPlayer player) {
-		super(no, role, chat, deadType, side, dead, blocked, jailed, targetPlayer, roleType, player);
+			boolean jailed, boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player) {
+		super(no, role, chat, deadType, side, dead, blocked, jailed, healed, targetPlayer, roleType, player);
 	}
 
 	@Override
@@ -23,20 +23,21 @@ public class Doctor extends ARole{
 		if (!isDead()) {
 			if (!isJailed()) {
 				if (!isBlocked()) {
-					switch (getTargetPlayer().getRole().getSide()) {
-					case Town:
-						if (getPlayer().getRole().getSide()==Side.Town) {
-							
+					if (!targetPlayer.getRole().isJailed()) {
+						switch (targetPlayer.getRole().getRole()) {
+						case Veteran:
+							if (targetPlayer.getRole().getTargetPlayer()!=null || targetPlayer.getRole().getTargetPlayer()!=targetPlayer) {
+								targetPlayer.getRole().setHealed(true);
+							}
+							break;
+						case Werewolf:
+							if (getPlayer().getActiveLobby().isFullmoon()) {
+								setDead(true);
+							}
+							break;
+						default:
+							break;
 						}
-						break;
-					case Mafia:
-						
-						break;
-					case Neutral:
-						
-						break;
-					default:
-						break;
 					}
 				}else getPlayer().getPlayer().sendMessage(ChatColor.BLUE+"Last night,you were blocked by someone.");
 			}else getPlayer().getPlayer().sendMessage(ChatColor.RED+"JAIL!");

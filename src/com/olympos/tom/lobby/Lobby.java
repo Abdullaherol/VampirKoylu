@@ -24,6 +24,7 @@ public class Lobby {
 	private GameManager gameManager;
 	private LobbyManager lobbyManager;
 	private boolean ready = false;
+	private boolean fullmoon = false;
 	
 	
 	public Lobby(Main plugin) {
@@ -32,6 +33,18 @@ public class Lobby {
 		selectedRoles =  new ArrayList<Roles>();
 		
 	}
+	
+	
+	public boolean isFullmoon() {
+		return fullmoon;
+	}
+
+
+	public void setFullmoon(boolean fullmoon) {
+		this.fullmoon = fullmoon;
+	}
+
+
 	public boolean isStarted() {
 		return started;
 	}
@@ -86,6 +99,16 @@ public class Lobby {
 	}
 	public void playerQuit(Player player) {
 		players.remove(player);
+	}
+
+
+	public LobbyManager getLobbyManager() {
+		return lobbyManager;
+	}
+
+
+	public void setLobbyManager(LobbyManager lobbyManager) {
+		this.lobbyManager = lobbyManager;
 	}
 	
 	

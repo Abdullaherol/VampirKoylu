@@ -15,15 +15,14 @@ public abstract class ARole {
 	private Side side;
 	private boolean dead = false;
 	private boolean blocked = false;
-	private boolean jailed =false;
+	private boolean jailed = false;
+	private boolean healed = false;
 	private TPlayer targetPlayer;
 	private RoleType roleType;
 	private TPlayer player;
 	
-	
-	
 	public ARole(int no, Roles role, Chat chat, Dead deadType, Side side, boolean dead, boolean blocked, boolean jailed,
-			TPlayer targetPlayer, RoleType roleType, TPlayer player) {
+			boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player) {
 		super();
 		this.no = no;
 		this.role = role;
@@ -33,12 +32,24 @@ public abstract class ARole {
 		this.dead = dead;
 		this.blocked = blocked;
 		this.jailed = jailed;
+		this.healed = healed;
 		this.targetPlayer = targetPlayer;
 		this.roleType = roleType;
 		this.player = player;
 	}
+	
 	public void go(TPlayer tPlayer) {}
 	public void go(TPlayer tPlayer,TPlayer tPlayer2) {}
+	
+	
+	public boolean isHealed() {
+		return healed;
+	}
+
+	public void setHealed(boolean healed) {
+		this.healed = healed;
+	}
+
 	public int getNo() {
 		return no;
 	}
@@ -106,6 +117,6 @@ public abstract class ARole {
 		this.player = player;
 	}
 	
-	public void 
+
 	
 }
