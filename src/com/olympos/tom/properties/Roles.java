@@ -1,14 +1,14 @@
-package com.olympos.tom.roles;
+package com.olympos.tom.properties;
 
 public enum Roles {
 	Investigator,
 	Lookout,
-	Sheriff,
+	Sheriff, //process
 	Spy,
 	Jailor,
-	Veteran,
+	Veteran, //finish
 	Bodyguard,
-	Doctor,
+	Doctor, //finish
 	Escort,
 	Medium,
 	Godfather,

@@ -9,7 +9,7 @@ public enum RoleType {
 	Look, //lookout
  	Researcher_1, //investigator
 	Researcher_3, //sheriff
-	Jailor, //jailor
+	Jailor, //jailor 
 	Chat, //spy medium
 	
 	

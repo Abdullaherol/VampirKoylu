@@ -1,7 +1,6 @@
 package com.olympos.tom.handler;
 
 import java.util.ArrayList;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -9,12 +8,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-
 import com.olympos.tom.Main;
+import com.olympos.tom.lobby.GameManager;
 import com.olympos.tom.lobby.Lobby;
 import com.olympos.tom.map.Map;
-import com.olympos.tom.roles.Roles;
+import com.olympos.tom.object.TPlayer;
+import com.olympos.tom.properties.Chat;
+import com.olympos.tom.properties.Roles;
+import com.olympos.tom.roles.ARole;
 
 public class MainHandler implements Listener{
 	private Main plugin;
@@ -116,5 +119,79 @@ public class MainHandler implements Listener{
 			plugin.getLobbies().put(event.getPlayer(), new ArrayList<Lobby>());
 		}
 	}
-
+	
+	public void onChat(AsyncPlayerChatEvent event) {
+		Player player = event.getPlayer();
+		TPlayer tPlayer = plugin.getPlayers().get(player);
+		if (tPlayer.getActiveLobby()!=null) {
+			Lobby lobby = tPlayer.getActiveLobby();
+			event.setCancelled(true);
+			GameManager gameManager = lobby.getGameManager();
+			ARole role = tPlayer.getRole();
+			
+			if (!tPlayer.getRole().isDead()) {
+				if (gameManager.isNight()) {
+					//jailor
+					//medium
+					//mafia
+					//vampir
+					if (!role.isJailed()) {
+						if (role.getChat()==Chat.medium) {
+							for (Player eachPlayer : lobby.getPlayers().keySet()) {
+								TPlayer Tplayer = lobby.getPlayers().get(eachPlayer);
+								if (Tplayer.getRole().getChat()==Chat.dead) {
+									eachPlayer.sendMessage("Medium: "+event.getMessage());
+								}
+							}
+						}else if (role.getChat()==Chat.mafia) {
+							for (Player eachPlayer : lobby.getPlayers().keySet()) {
+								TPlayer Tplayer = lobby.getPlayers().get(eachPlayer);
+								if (Tplayer.getRole().getChat()==Chat.mafia) {
+									eachPlayer.sendMessage(player.getName()+"("+tPlayer.getRole().getRole().toString()+"): "+event.getMessage());
+								}else if (tPlayer.getRole().getChat()==Chat.spy) {
+									eachPlayer.sendMessage(tPlayer.getRole().getRole().toString()+": "+event.getMessage());
+								}
+							}
+						}else if (role.getChat()==Chat.vampir) {
+							for (Player eachPlayer : lobby.getPlayers().keySet()) {
+								TPlayer Tplayer = lobby.getPlayers().get(eachPlayer);
+								if (Tplayer.getRole().getChat()==Chat.vampir) {
+									eachPlayer.sendMessage(player.getName()+"("+tPlayer.getRole().getRole().toString()+"): "+event.getMessage());
+								}
+							}
+						}else if (role.getChat()==Chat.jailor) {
+							for (Player eachPlayer : lobby.getPlayers().keySet()) {
+								TPlayer Tplayer = lobby.getPlayers().get(eachPlayer);
+								if (Tplayer.getRole().isJailed()) {
+									eachPlayer.sendMessage(eachPlayer.getName()+"("+tPlayer.getRole().getRole().toString()+"): "+event.getMessage());
+								}
+							}
+						}
+					}else {
+						for (Player eachPlayer : lobby.getPlayers().keySet()) {
+							TPlayer Tplayer = lobby.getPlayers().get(eachPlayer);
+							if (Tplayer.getRole().getRole()==Roles.Jailor) {
+								eachPlayer.sendMessage(eachPlayer.getName()+": "+event.getMessage());
+							}
+						}
+					}
+				}else {
+					for (Player eachPlayer : lobby.getPlayers().keySet()) {
+						eachPlayer.sendMessage(player.getName()+": "+event.getMessage());
+					}
+				}
+			}else {
+				for (Player  eachPlayer: lobby.getPlayers().keySet()) {
+					TPlayer Tplayer = lobby.getPlayers().get(eachPlayer);
+					if (gameManager.isNight()) {
+						if (Tplayer.getRole().getChat()==Chat.dead || Tplayer.getRole().getChat()==Chat.medium) {
+							eachPlayer.sendMessage("Dead Player: "+event.getMessage());
+						}
+					}else {
+						
+					}
+				}
+			}
+		}
+	}
 }

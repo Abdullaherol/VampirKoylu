@@ -18,7 +18,7 @@ import com.olympos.tom.object.TPlayer;
 public class Main extends JavaPlugin{
 	
 	private HashMap<Player, TPlayer> players;
-	private HashMap<String, Map> maps;
+	private HashMap<String, Map> maps;  
 	private HashMap<Player, ArrayList<Lobby>> lobbies;
 	private ArrayList<Lobby> readyLobbies;
 	private LobbyGui lobbyGui;

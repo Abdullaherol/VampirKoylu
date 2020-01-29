@@ -60,5 +60,47 @@ public class GameManager extends BukkitRunnable{
 	
 	
 	}
+	public Lobby getLobby() {
+		return lobby;
+	}
+	public void setLobby(Lobby lobby) {
+		this.lobby = lobby;
+	}
+	public int getDay() {
+		return day;
+	}
+	public void setDay(int day) {
+		this.day = day;
+	}
+	public int getTime() {
+		return time;
+	}
+	public void setTime(int time) {
+		this.time = time;
+	}
+	public boolean isNight() {
+		return night;
+	}
+	public void setNight(boolean night) {
+		this.night = night;
+	}
+	public boolean isVote() {
+		return vote;
+	}
+	public void setVote(boolean vote) {
+		this.vote = vote;
+	}
+	public boolean isDead() {
+		return dead;
+	}
+	public void setDead(boolean dead) {
+		this.dead = dead;
+	}
+	public boolean isDiscussion() {
+		return discussion;
+	}
+	public void setDiscussion(boolean discussion) {
+		this.discussion = discussion;
+	}
 
 }

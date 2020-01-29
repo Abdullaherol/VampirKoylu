@@ -6,5 +6,6 @@ public enum Chat {
 	town,
 	medium,
 	vampir,
-	spy
+	spy,
+	jailor
 }

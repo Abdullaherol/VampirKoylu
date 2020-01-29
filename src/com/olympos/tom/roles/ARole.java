@@ -4,12 +4,14 @@ import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.Chat;
 import com.olympos.tom.properties.Dead;
 import com.olympos.tom.properties.RoleType;
+import com.olympos.tom.properties.Roles;
 import com.olympos.tom.properties.Side;
 
 public abstract class ARole {
 	
 	private int no;
 	private Roles role;
+	private int use;
 	private Chat chat;
 	private Dead deadType;
 	private Side side;
@@ -21,11 +23,12 @@ public abstract class ARole {
 	private RoleType roleType;
 	private TPlayer player;
 	
-	public ARole(int no, Roles role, Chat chat, Dead deadType, Side side, boolean dead, boolean blocked, boolean jailed,
+	public ARole(int no, Roles role, int use ,Chat chat, Dead deadType, Side side, boolean dead, boolean blocked, boolean jailed,
 			boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player) {
 		super();
 		this.no = no;
 		this.role = role;
+		this.use = use;
 		this.chat = chat;
 		this.deadType = deadType;
 		this.side = side;
@@ -44,6 +47,14 @@ public abstract class ARole {
 	
 	public boolean isHealed() {
 		return healed;
+	}
+
+	public int getUse() {
+		return use;
+	}
+
+	public void setUse(int use) {
+		this.use = use;
 	}
 
 	public void setHealed(boolean healed) {
@@ -85,6 +96,9 @@ public abstract class ARole {
 	}
 	public void setDead(boolean dead) {
 		this.dead = dead;
+		if (dead) {
+			chat = Chat.dead;
+		}
 	}
 	public boolean isBlocked() {
 		return blocked;

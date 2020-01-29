@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import com.olympos.tom.Main;
 import com.olympos.tom.map.Map;
 import com.olympos.tom.object.TPlayer;
-import com.olympos.tom.roles.Roles;
+import com.olympos.tom.properties.Roles;
 
 import sun.net.www.content.text.plain;
 

@@ -2,7 +2,6 @@ package com.olympos.tom.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -11,18 +10,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import com.olympos.tom.Main;
 import com.olympos.tom.lobby.Lobby;
-import com.olympos.tom.map.Map;
-import com.olympos.tom.roles.Roles;
+import com.olympos.tom.properties.Roles;
 
 public class LobbyGui {
 	
 	private Main plugin;
 	
 	public LobbyGui(Main plugin) {
-		super();
 		this.plugin = plugin;
 	}
 
@@ -137,6 +133,7 @@ public class LobbyGui {
 			
 			l+=9;
 		}
+		
 		int s = 8;
 		for (int j = 6; j < 53;) {
 			if (s<=16) {
