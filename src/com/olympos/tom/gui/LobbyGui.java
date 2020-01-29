@@ -74,7 +74,7 @@ public class LobbyGui {
 	}
 	
 	public void openCreateLobby(Player player) {
-		Lobby lobby = new Lobby();
+		Lobby lobby = new Lobby(plugin);
 		ArrayList<Lobby> lobbies = new ArrayList<Lobby>();
 		lobbies.add(lobby);
 		plugin.getLobbies().put(player, lobbies);

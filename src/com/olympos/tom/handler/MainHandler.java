@@ -53,7 +53,8 @@ public class MainHandler implements Listener{
 		case "Join Lobby":
 			if (event.getClick()==ClickType.LEFT) {
 				//join this lobby
-				
+				Lobby lobby = plugin.getReadyLobbies().get(event.getSlot());
+				lobby.playerJoin(player);
 			}else if (event.getClick()==ClickType.RIGHT) {
 				//open players in the lobby
 			
@@ -79,10 +80,23 @@ public class MainHandler implements Listener{
 						}else if (lobby.getMap()==null) {
 							player.sendMessage(ChatColor.RED+"You have to choose a map!");
 						}else {
-							player.sendMessage(ChatColor.GREEN+"Successfully created the lobby.");
-							lobby.setReady(true);
-							plugin.getReadyLobbies().add(lobby);
-							player.closeInventory();
+							ArrayList<Roles> mustRoles = new ArrayList<Roles>();
+							mustRoles.add(Roles.Investigator);
+							mustRoles.add(Roles.Doctor);
+							mustRoles.add(Roles.Jailor);
+							mustRoles.add(Roles.Medium);
+							mustRoles.add(Roles.Escort);
+							mustRoles.add(Roles.Godfather);
+							mustRoles.add(Roles.Mafia);
+							mustRoles.add(Roles.Jester);
+							if (lobby.getSelectedRoles().containsAll(mustRoles)) {
+								lobby.getPlayers().put(player, null);
+								plugin.getReadyLobbies().add(lobby);
+								lobby.setReady(true);
+								player.closeInventory();
+							}else player.sendMessage(ChatColor.RED+"You have to select these roles: \n"
+													+ChatColor.GREEN+ "Investigator,Doctor,Jailor,Medium,Escort,"
+													+ChatColor.RED+"Godfather,Mafia,"+ChatColor.GRAY+"Jester.");
 							
 						}
 					}

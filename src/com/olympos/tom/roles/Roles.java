@@ -19,3 +19,4 @@ public enum Roles {
 	Werewolf,
 	Vampire
 }
+//2 mafia 1 jester 5 köylü
