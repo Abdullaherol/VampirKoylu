@@ -14,6 +14,15 @@ import com.olympos.tom.command.CMap;
 import com.olympos.tom.lobby.Lobby;
 import com.olympos.tom.map.Map;
 import com.olympos.tom.object.TPlayer;
+import com.olympos.tom.properties.Chat;
+import com.olympos.tom.properties.Dead;
+import com.olympos.tom.properties.RoleType;
+import com.olympos.tom.properties.Roles;
+import com.olympos.tom.properties.Side;
+import com.olympos.tom.roles.ARole;
+import com.olympos.tom.roles.Investigator;
+
+import jdk.nashorn.internal.ir.Block;
 
 public class Main extends JavaPlugin{
 	
@@ -30,6 +39,7 @@ public class Main extends JavaPlugin{
 		lobbies = new HashMap<Player, ArrayList<Lobby>>();
 		lobbyGui = new LobbyGui(this);
 		readyLobbies = new ArrayList<Lobby>();
+		
 		Bukkit.getServer().getPluginCommand("map").setExecutor(new CMap(this));
 		Bukkit.getServer().getPluginCommand("play").setExecutor(new CPlay(this));
 		Bukkit.getServer().getPluginManager().registerEvents(new MainHandler(this),this);

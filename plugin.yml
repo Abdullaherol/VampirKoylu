@@ -5,3 +5,4 @@ main: com.olympos.tom.Main
 commands:
   map:
   play:
+  jailor:
