@@ -14,11 +14,13 @@ import com.olympos.tom.properties.Side;
 public class Lookout extends ARole{
 
 	public Lookout(int no, Roles role, int use, Chat chat, Dead deadType, Side side, boolean dead, boolean blocked,
-			boolean jailed, boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player,RoleTime roleTime) {
-		super(no, role, use, chat, deadType, side, dead, blocked, jailed, healed, targetPlayer, roleType, player,roleTime);
+			boolean jailed, boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player, RoleTime roleTime,
+			TPlayer bodyguard) {
+		super(no, role, use, chat, deadType, side, dead, blocked, jailed, healed, targetPlayer, roleType, player, roleTime,
+				bodyguard);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
 	public void go(TPlayer targetPlayer) {
 		if (!isDead()) {

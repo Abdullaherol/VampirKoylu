@@ -24,9 +24,10 @@ public abstract class ARole {
 	private RoleType roleType;
 	private TPlayer player;
 	private RoleTime roleTime;
+	private TPlayer bodyguard;
 	
 	public ARole(int no, Roles role, int use ,Chat chat, Dead deadType, Side side, boolean dead, boolean blocked, boolean jailed,
-			boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player,RoleTime roleTime) {
+			boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player,RoleTime roleTime,TPlayer bodyguard) {
 		super();
 		this.no = no;
 		this.role = role;
@@ -42,12 +43,21 @@ public abstract class ARole {
 		this.roleType = roleType;
 		this.player = player;
 		this.roleTime = roleTime;
+		this.bodyguard = bodyguard;
 	}
 	
 	public void go(TPlayer tPlayer) {}
 	public void go(TPlayer tPlayer,TPlayer tPlayer2) {}
 	
 	
+	public TPlayer getBodyguard() {
+		return bodyguard;
+	}
+
+	public void setBodyguard(TPlayer bodyguard) {
+		this.bodyguard = bodyguard;
+	}
+
 	public RoleTime getRoleTime() {
 		return roleTime;
 	}

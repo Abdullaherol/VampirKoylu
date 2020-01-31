@@ -11,9 +11,12 @@ import com.olympos.tom.properties.Side;
 public class Jailor extends ARole{
 
 	public Jailor(int no, Roles role, int use, Chat chat, Dead deadType, Side side, boolean dead, boolean blocked,
-			boolean jailed, boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player,
-			RoleTime roleTime) {
-		super(no, role, use, chat, deadType, side, dead, blocked, jailed, healed, targetPlayer, roleType, player, roleTime);
+			boolean jailed, boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player, RoleTime roleTime,
+			TPlayer bodyguard) {
+		super(no, role, use, chat, deadType, side, dead, blocked, jailed, healed, targetPlayer, roleType, player, roleTime,
+				bodyguard);
+		// TODO Auto-generated constructor stub
 	}
+
 
 }

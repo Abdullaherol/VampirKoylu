@@ -38,6 +38,21 @@ public class GameManager extends BukkitRunnable{
 						if (vote) {
 							if (night) {
 								//at finish night
+								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+									if (eachTPlayer.getRole().isDead()) {
+										for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+											if (!otherTPlayer.getRole().isDead()) {
+												eachTPlayer.getPlayer().showPlayer(otherTPlayer.getPlayer());
+											}
+										}
+									}
+								}
+								
+								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+									if (eachTPlayer.getRole().isDead()) {
+										
+									}
+								}
 							}else {
 								
 								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
