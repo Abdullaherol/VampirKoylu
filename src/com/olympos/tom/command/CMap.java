@@ -39,11 +39,18 @@ public class CMap implements CommandExecutor {
 						plugin.getMaps().put(value2, map);
 						player.sendMessage(ChatColor.GRAY+"map created");
 						break;
-					case "house":
+					case "houseIn":
 						if (plugin.getMaps().containsKey(value2)) {
 							Map map2 = plugin.getMaps().get(value2);
-							map2.getHomes().add(player.getLocation());
-							player.sendMessage(ChatColor.GRAY+"house added");
+							map2.getHomesIn().add(player.getLocation());
+							player.sendMessage(ChatColor.GRAY+"houseIn added");
+						}
+						break;
+					case "houseOut":
+						if (plugin.getMaps().containsKey(value2)) {
+							Map map2 = plugin.getMaps().get(value2);
+							map2.getHomesOut().add(player.getLocation());
+							player.sendMessage(ChatColor.GRAY+"houseOut added");
 						}
 						break;
 					case "sign":

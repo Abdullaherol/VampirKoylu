@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.olympos.tom.Main;
 import com.olympos.tom.object.TPlayer;
+import com.olympos.tom.properties.RoleQueue;
 import com.olympos.tom.properties.Roles;
 import com.olympos.tom.properties.Side;
 
@@ -40,23 +41,30 @@ public class GameManager extends BukkitRunnable{
 								//at finish night
 								night=false;
 								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+									eachTPlayer.getPlayer().setPlayerTime(18000, true);
 									if (!eachTPlayer.getRole().isDead()) {
 										for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 											if (!otherTPlayer.getRole().isDead()) {
 												eachTPlayer.getPlayer().showPlayer(otherTPlayer.getPlayer());
+												
 											}
 										}
 									}
 								}
 								
-								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
-									if (eachTPlayer.getRole().isDead()) {
-										
+								for (int i = 1; i < RoleQueue.values().length; i++) {
+									for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+										if (!eachTPlayer.getRole().isDead()) {
+											if (eachTPlayer.getRole().getQueue()==RoleQueue.values()[i]) {
+												eachTPlayer.getRole().go(eachTPlayer.getRole().getTargetPlayer());
+											}
+										}
 									}
 								}
 							}else {
 								
 								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+									eachTPlayer.getPlayer().setPlayerTime(6000, true);
 									if (!eachTPlayer.getRole().isDead()) {
 										if (eachTPlayer.getRole().getSide()==Side.Town) {
 											if (eachTPlayer.getRole().getRole()==Roles.Jailor) {

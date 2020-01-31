@@ -3,6 +3,7 @@ package com.olympos.tom.roles;
 import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.Chat;
 import com.olympos.tom.properties.Dead;
+import com.olympos.tom.properties.RoleQueue;
 import com.olympos.tom.properties.RoleTime;
 import com.olympos.tom.properties.RoleType;
 import com.olympos.tom.properties.Roles;
@@ -25,9 +26,10 @@ public abstract class ARole {
 	private TPlayer player;
 	private RoleTime roleTime;
 	private TPlayer bodyguard;
+	private RoleQueue queue;
 	
 	public ARole(int no, Roles role, int use ,Chat chat, Dead deadType, Side side, boolean dead, boolean blocked, boolean jailed,
-			boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player,RoleTime roleTime,TPlayer bodyguard) {
+			boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player,RoleTime roleTime,TPlayer bodyguard,RoleQueue queue) {
 		super();
 		this.no = no;
 		this.role = role;
@@ -44,12 +46,21 @@ public abstract class ARole {
 		this.player = player;
 		this.roleTime = roleTime;
 		this.bodyguard = bodyguard;
+		this.queue = queue;
 	}
 	
 	public void go(TPlayer tPlayer) {}
 	public void go(TPlayer tPlayer,TPlayer tPlayer2) {}
 	
 	
+	public RoleQueue getQueue() {
+		return queue;
+	}
+
+	public void setQueue(RoleQueue queue) {
+		this.queue = queue;
+	}
+
 	public TPlayer getBodyguard() {
 		return bodyguard;
 	}

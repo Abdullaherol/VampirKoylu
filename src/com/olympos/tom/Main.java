@@ -16,6 +16,7 @@ import com.olympos.tom.map.Map;
 import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.Chat;
 import com.olympos.tom.properties.Dead;
+import com.olympos.tom.properties.RoleQueue;
 import com.olympos.tom.properties.RoleType;
 import com.olympos.tom.properties.Roles;
 import com.olympos.tom.properties.Side;

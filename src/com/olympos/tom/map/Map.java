@@ -10,7 +10,8 @@ public class Map {
 	
 	private boolean busy = false;
 	private String name;
-	private ArrayList<Location> homes;
+	private ArrayList<Location> homesIn;
+	private ArrayList<Location> homesOut;
 	private ArrayList<Door> doors;
 	private ArrayList<Block> signs;
 	private Location hangLocation;
@@ -18,7 +19,8 @@ public class Map {
 	
 	public Map(String name) {
 		this.name = name;
-		homes = new ArrayList<Location>();
+		homesIn = new ArrayList<Location>();
+		homesOut = new ArrayList<Location>();
 		doors = new ArrayList<Door>();
 		signs = new ArrayList<Block>();
 		
@@ -48,12 +50,20 @@ public class Map {
 		this.name = name;
 	}
 
-	public ArrayList<Location> getHomes() {
-		return homes;
+	public ArrayList<Location> getHomesIn() {
+		return homesIn;
 	}
 
-	public void setHomes(ArrayList<Location> homes) {
-		this.homes = homes;
+	public void setHomesIn(ArrayList<Location> homesIn) {
+		this.homesIn = homesIn;
+	}
+
+	public ArrayList<Location> getHomesOut() {
+		return homesOut;
+	}
+
+	public void setHomesOut(ArrayList<Location> homesOut) {
+		this.homesOut = homesOut;
 	}
 
 	public ArrayList<Door> getDoors() {

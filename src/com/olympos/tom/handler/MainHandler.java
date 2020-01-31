@@ -241,7 +241,17 @@ public class MainHandler implements Listener{
 								for (TPlayer eachTPlayer : tPlayer.getActiveLobby().getPlayers().values()) {
 									if (eachTPlayer.getRole().getNo()==index) {
 										if (!eachTPlayer.getRole().isDead()) {
-											tPlayer.getRole().setTargetPlayer(eachTPlayer);
+											if (eachTPlayer.getRole().getRole()==Roles.Doctor) {
+												tPlayer.getRole().setTargetPlayer(eachTPlayer);
+											}else if (eachTPlayer.getRole().getRole()==Roles.Veteran) {
+												if (eachTPlayer==tPlayer) {
+													tPlayer.getRole().setTargetPlayer(eachTPlayer);
+												}
+											}else {
+												if (tPlayer!=eachTPlayer) {
+													tPlayer.getRole().setTargetPlayer(eachTPlayer);
+												}
+											}
 										}
 									}
 								}
