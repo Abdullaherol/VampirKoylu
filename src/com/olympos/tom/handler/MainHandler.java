@@ -1,15 +1,22 @@
 package com.olympos.tom.handler;
 
 import java.util.ArrayList;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.material.Door;
+
 import com.olympos.tom.Main;
 import com.olympos.tom.lobby.GameManager;
 import com.olympos.tom.lobby.Lobby;
@@ -32,7 +39,7 @@ public class MainHandler implements Listener{
 		if(event.getClickedInventory()==null) return;
 		if(event.getCurrentItem()==null) return;
 		Player player = (Player)event.getWhoClicked();
-		
+		TPlayer tPlayer = plugin.getPlayers().get(player);
 		event.setCancelled(true);
 		switch (event.getClickedInventory().getTitle()) {
 		case "Town of Minecraft":
@@ -57,10 +64,22 @@ public class MainHandler implements Listener{
 			if (event.getClick()==ClickType.LEFT) {
 				//join this lobby
 				Lobby lobby = plugin.getReadyLobbies().get(event.getSlot());
-				lobby.playerJoin(player);
+				lobby.playerJoin(tPlayer);
 			}else if (event.getClick()==ClickType.RIGHT) {
 				//open players in the lobby
 			
+			}
+			break;
+		case "Jailor":
+			Player targetPlayer = Bukkit.getPlayer(event.getCurrentItem().getItemMeta().getDisplayName());
+			TPlayer target = tPlayer.getActiveLobby().getPlayers().get(targetPlayer);
+			if (tPlayer.getRole().getTargetPlayer()!=null && tPlayer.getRole().getTargetPlayer()!=target) {
+				tPlayer.getRole().getTargetPlayer().getRole().setJailed(false);
+				tPlayer.getRole().setTargetPlayer(target);
+				target.getRole().setJailed(true);
+			}else {
+				tPlayer.getRole().setTargetPlayer(target);
+				target.getRole().setJailed(true);
 			}
 			break;
 		default:
@@ -194,4 +213,44 @@ public class MainHandler implements Listener{
 			}
 		}
 	}
+	
+	public void onBreak(BlockBreakEvent event) {
+		Player player = event.getPlayer();
+		if (!player.isOp()) {
+			event.setCancelled(true);
+		}
+	}
+	public void onPlace(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		if (!player.isOp()) {
+			event.setCancelled(true);
+		}
+	}
+	//on click to door
+	public void onClickBlock(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		if (event.getClickedBlock().getType().toString().contains("door")) {
+			TPlayer tPlayer = plugin.getPlayers().get(player);
+			if (tPlayer.getActiveLobby()!=null) {
+				if (!tPlayer.getRole().isDead()) {
+					if (tPlayer.getActiveLobby().getGameManager().isNight()) {
+						Door door = (Door) event.getClickedBlock().getState().getData();
+						for (Door eachDoor : tPlayer.getActiveLobby().getMap().getDoors()) {
+							if (door.equals(eachDoor)) {
+								int index = tPlayer.getActiveLobby().getMap().getDoors().indexOf(door);
+								for (TPlayer eachTPlayer : tPlayer.getActiveLobby().getPlayers().values()) {
+									if (eachTPlayer.getRole().getNo()==index) {
+										if (!eachTPlayer.getRole().isDead()) {
+											tPlayer.getRole().setTargetPlayer(eachTPlayer);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
+

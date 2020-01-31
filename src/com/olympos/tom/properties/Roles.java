@@ -1,21 +1,21 @@
 package com.olympos.tom.properties;
 
 public enum Roles {
-	Investigator,
-	Lookout,
-	Sheriff, //process
-	Spy,
-	Jailor,
-	Veteran, //finish
-	Bodyguard,
-	Doctor, //finish
-	Escort,
-	Medium,
-	Godfather,
-	Mafia,
-	Blackmailer,
+	Investigator, //finish ***
+	Lookout, //finish 
+	Sheriff, //finish 
+	Spy, //finish 
+	Jailor, //finish ***
+	Veteran, //finish 
+	Bodyguard, //
+	Doctor, //finish ***
+	Escort, // ***
+	Medium,// ***
+	Godfather,// ***
+	Mafia,// ***
+	Blackmailer, 
 	Consort,
-	Jester,
+	Jester,// ***
 	Werewolf,
 	Vampire
 }

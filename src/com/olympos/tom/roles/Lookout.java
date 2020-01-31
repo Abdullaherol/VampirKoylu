@@ -27,7 +27,8 @@ public class Lookout extends ARole{
 					String string = "";
 					for (Player player : getPlayer().getActiveLobby().getPlayers().keySet()) {
 						TPlayer tPlayer = getPlayer().getActiveLobby().getPlayers().get(player);
-						if (!tPlayer.getRole().isDead() && tPlayer.getRole().getTargetPlayer()==targetPlayer) {
+						if (!tPlayer.getRole().isDead() && tPlayer.getRole().getTargetPlayer()==targetPlayer &&targetPlayer.getRole().getRoleType()==RoleType.Visit
+								&& !targetPlayer.getRole().isJailed() && !targetPlayer.getRole().isBlocked()) {
 							string += ChatColor.GREEN+tPlayer.getRole().getPlayer().getPlayer().getName() +ChatColor.GRAY+",";
 						}
 					}

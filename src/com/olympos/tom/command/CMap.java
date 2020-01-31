@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Door;
 
 import com.olympos.tom.Main;
 import com.olympos.tom.map.Map;
@@ -55,8 +56,11 @@ public class CMap implements CommandExecutor {
 					case "door":
 						if (plugin.getMaps().containsKey(value2)) {
 							Map map2 = plugin.getMaps().get(value2);
-							map2.getDoors().add(player.getTargetBlock(null, 5));
+							Door door = (Door) player.getLocation().getBlock().getState().getData();
+							map2.getDoors().add(door);
 							player.sendMessage(ChatColor.GRAY+"door added");
+							
+
 						}
 						break;
 					case "hang":

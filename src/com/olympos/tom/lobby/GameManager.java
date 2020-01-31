@@ -1,20 +1,25 @@
 package com.olympos.tom.lobby;
 
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
+import java.util.HashMap;
 
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import com.olympos.tom.Main;
+import com.olympos.tom.object.TPlayer;
+import com.olympos.tom.properties.Roles;
+import com.olympos.tom.properties.Side;
 
 public class GameManager extends BukkitRunnable{
 
 	private Main plugin;
 	private Lobby lobby;
 	private int day;
-	private int time = 45; //first 15 second give roles,30 second discussion
+	private int time = 0; 
 	private boolean night = false;
 	private boolean vote = true; //at first day true
 	private boolean dead = true; //at first day true
 	private boolean discussion = false;
+	private HashMap<Roles, Player> players;
 	//30sn day,30sn night
 	
 	public GameManager(Main plugin,Lobby lobby) {
@@ -22,6 +27,7 @@ public class GameManager extends BukkitRunnable{
 		this.plugin = plugin;
 		this.runTaskTimer(plugin, 60, 20);
 	}
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		System.out.println(time);
@@ -31,8 +37,62 @@ public class GameManager extends BukkitRunnable{
 					if (discussion) {
 						if (vote) {
 							if (night) {
-								
+								//at finish night
 							}else {
+								
+								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+									if (!eachTPlayer.getRole().isDead()) {
+										if (eachTPlayer.getRole().getSide()==Side.Town) {
+											if (eachTPlayer.getRole().getRole()==Roles.Jailor) {
+												if (eachTPlayer.getRole().getTargetPlayer()!=null) {
+													eachTPlayer.getPlayer().teleport(lobby.getMap().getJaiLocation());
+													Player jailed = eachTPlayer.getRole().getTargetPlayer().getPlayer();
+													eachTPlayer.getPlayer().showPlayer(jailed);
+													jailed.showPlayer(eachTPlayer.getPlayer());
+												}else {
+													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+														if (!otherTPlayer.getRole().isDead()) {
+															if (otherTPlayer!=eachTPlayer) {
+																eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
+															}
+														}
+													}
+												}
+											}else {
+												for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+													if (!otherTPlayer.getRole().isDead() && !otherTPlayer.getRole().isJailed()) {
+														if (otherTPlayer!=eachTPlayer) {
+															eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
+														}
+													}
+												}
+											}
+										}else if (eachTPlayer.getRole().getSide()==Side.Neutral) {
+											if (eachTPlayer.getRole().getRole()==Roles.Vampire) {
+												for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+													if (!otherTPlayer.getRole().isDead()) {
+														if (otherTPlayer!=eachTPlayer) {
+															if (otherTPlayer.getRole().getRole()==Roles.Vampire) {
+																
+															}else {
+																eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
+															}
+														}
+													}
+												}
+											}else {
+												for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+													if (!otherTPlayer.getRole().isDead()) {
+														if (otherTPlayer!=eachTPlayer) {
+															eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+								
 								night=true;
 								vote=false;
 								dead=false;
@@ -101,6 +161,12 @@ public class GameManager extends BukkitRunnable{
 	}
 	public void setDiscussion(boolean discussion) {
 		this.discussion = discussion;
+	}
+	public HashMap<Roles, Player> getPlayers() {
+		return players;
+	}
+	public void setPlayers(HashMap<Roles, Player> players) {
+		this.players = players;
 	}
 
 }

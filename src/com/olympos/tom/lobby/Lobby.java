@@ -2,16 +2,11 @@ package com.olympos.tom.lobby;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
 import com.olympos.tom.Main;
 import com.olympos.tom.map.Map;
 import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.Roles;
-
-import sun.net.www.content.text.plain;
 
 public class Lobby {
 	
@@ -94,11 +89,13 @@ public class Lobby {
 		}
 	}
 	
-	public void playerJoin(Player player) {
-		players.put(player, null);
+	public void playerJoin(TPlayer player) {
+		players.put(player.getPlayer(), null);
+		player.setActiveLobby(this);
 	}
-	public void playerQuit(Player player) {
-		players.remove(player);
+	public void playerQuit(TPlayer player) {
+		players.remove(player.getPlayer());
+		player.setActiveLobby(null);
 	}
 
 

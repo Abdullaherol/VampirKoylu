@@ -4,22 +4,32 @@ import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.material.Door;
 
 public class Map {
 	
 	private boolean busy = false;
 	private String name;
 	private ArrayList<Location> homes;
-	private ArrayList<Block> doors;
+	private ArrayList<Door> doors;
 	private ArrayList<Block> signs;
 	private Location hangLocation;
+	private Location jaiLocation;
 	
 	public Map(String name) {
 		this.name = name;
 		homes = new ArrayList<Location>();
-		doors = new ArrayList<Block>();
+		doors = new ArrayList<Door>();
 		signs = new ArrayList<Block>();
 		
+	}
+
+	public Location getJaiLocation() {
+		return jaiLocation;
+	}
+
+	public void setJaiLocation(Location jaiLocation) {
+		this.jaiLocation = jaiLocation;
 	}
 
 	public boolean isBusy() {
@@ -46,11 +56,11 @@ public class Map {
 		this.homes = homes;
 	}
 
-	public ArrayList<Block> getDoors() {
+	public ArrayList<Door> getDoors() {
 		return doors;
 	}
 
-	public void setDoors(ArrayList<Block> doors) {
+	public void setDoors(ArrayList<Door> doors) {
 		this.doors = doors;
 	}
 
