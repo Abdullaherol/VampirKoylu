@@ -20,6 +20,7 @@ public class Lobby {
 	private LobbyManager lobbyManager;
 	private boolean ready = false;
 	private boolean fullmoon = false;
+	private RoleGiver roleGiver;
 	
 	
 	public Lobby(Main plugin) {
@@ -37,6 +38,16 @@ public class Lobby {
 
 	public void setFullmoon(boolean fullmoon) {
 		this.fullmoon = fullmoon;
+	}
+
+
+	public RoleGiver getRoleGiver() {
+		return roleGiver;
+	}
+
+
+	public void setRoleGiver(RoleGiver roleGiver) {
+		this.roleGiver = roleGiver;
 	}
 
 
@@ -90,7 +101,7 @@ public class Lobby {
 	}
 	
 	public void playerJoin(TPlayer player) {
-		players.put(player.getPlayer(), null);
+		players.put(player.getPlayer(), player);
 		player.setActiveLobby(this);
 	}
 	public void playerQuit(TPlayer player) {

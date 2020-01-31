@@ -16,7 +16,7 @@ public class LobbyManager extends BukkitRunnable{
 
 	private Lobby lobby;
 	private Main plugin;
-	private int time = 10;
+	private int time = 60;
 	private int lastTime = 5;
 	private ScoreboardManager scoreboardManager;
 	private Scoreboard scoreboard;
@@ -24,10 +24,11 @@ public class LobbyManager extends BukkitRunnable{
 		this.plugin = plugin;
 		this.lobby = lobby;
 		scoreboardManager = Bukkit.getScoreboardManager();
-		this.runTaskTimer(plugin, 20, 20);
+		this.runTaskTimer(plugin, 0, 20);
 	}
 	@Override
 	public void run() {
+		System.out.println("time: "+time+" lastime: "+lastTime);
 		if (lobby.getPlayers().size()!=lobby.getSize()) {
 			
 			if (time==0) {
@@ -41,8 +42,14 @@ public class LobbyManager extends BukkitRunnable{
 			}
 			time--;
 		}else {
+			String[] titles = {"Players:   ","Time:      "};
+			int[] scores = {lobby.getPlayers().size(),lastTime};
+			scoreboard = scoreboardGenerator("Town of Minecraft",titles, scores);
+			for (Player player: lobby.getPlayers().keySet()) {
+				player.setScoreboard(scoreboard);
+			}
 			if (lastTime==0) {
-				lobby.setStarted(true);
+				lobby.setRoleGiver(new RoleGiver(lobby, plugin));
 				this.cancel();
 			}
 			lastTime--;
@@ -68,7 +75,9 @@ public class LobbyManager extends BukkitRunnable{
 		plugin.getReadyLobbies().remove(lobby);
 		lobby.setReady(false);
 		for (Player player : lobby.getPlayers().keySet()) {
-			player.setScoreboard(null);
+			if (player.getScoreboard()!=null) {
+				player.setScoreboard(null);
+			}
 		}
 		this.cancel();
 	}

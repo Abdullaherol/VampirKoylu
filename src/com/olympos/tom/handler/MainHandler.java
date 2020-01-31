@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.ClickType;
@@ -65,6 +66,7 @@ public class MainHandler implements Listener{
 				//join this lobby
 				Lobby lobby = plugin.getReadyLobbies().get(event.getSlot());
 				lobby.playerJoin(tPlayer);
+				player.closeInventory();
 			}else if (event.getClick()==ClickType.RIGHT) {
 				//open players in the lobby
 			
@@ -86,6 +88,7 @@ public class MainHandler implements Listener{
 			if (event.getClickedInventory().getTitle().contains("Create Lobby")) {
 				int index = Integer.valueOf(event.getClickedInventory().getTitle().split("Create Lobby ")[1]);
 				Lobby lobby = plugin.getLobbies().get(player).get(index);
+				lobby.setSize(2); //sadsdasdas
 				if (event.getCurrentItem().getType()==Material.GOLD_RECORD) {
 					Roles role = Roles.valueOf(event.getCurrentItem().getItemMeta().getDisplayName());
 					if (lobby.getSelectedRoles().contains(role)) {
@@ -106,14 +109,16 @@ public class MainHandler implements Listener{
 							mustRoles.add(Roles.Investigator);
 							mustRoles.add(Roles.Doctor);
 							mustRoles.add(Roles.Jailor);
-							mustRoles.add(Roles.Medium);
-							mustRoles.add(Roles.Escort);
+							//mustRoles.add(Roles.Medium);
+							//mustRoles.add(Roles.Escort);
 							mustRoles.add(Roles.Godfather);
-							mustRoles.add(Roles.Mafia);
-							mustRoles.add(Roles.Jester);
+							//mustRoles.add(Roles.Mafia);
+							//mustRoles.add(Roles.Jester);
 							if (lobby.getSelectedRoles().containsAll(mustRoles)) {
-								lobby.getPlayers().put(player, null);
-								plugin.getReadyLobbies().add(lobby);
+								lobby.playerJoin(tPlayer);;
+								if (!plugin.getReadyLobbies().contains(lobby)) {
+									plugin.getReadyLobbies().add(lobby);
+								}
 								lobby.setReady(true);
 								player.closeInventory();
 							}else player.sendMessage(ChatColor.RED+"You have to select these roles: \n"
@@ -230,26 +235,32 @@ public class MainHandler implements Listener{
 	public void onClickBlock(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		if (event.getClickedBlock().getType().toString().contains("door")) {
-			TPlayer tPlayer = plugin.getPlayers().get(player);
-			if (tPlayer.getActiveLobby()!=null) {
-				if (!tPlayer.getRole().isDead()) {
-					if (tPlayer.getActiveLobby().getGameManager().isNight()) {
-						Door door = (Door) event.getClickedBlock().getState().getData();
-						for (Door eachDoor : tPlayer.getActiveLobby().getMap().getDoors()) {
-							if (door.equals(eachDoor)) {
-								int index = tPlayer.getActiveLobby().getMap().getDoors().indexOf(door);
-								for (TPlayer eachTPlayer : tPlayer.getActiveLobby().getPlayers().values()) {
-									if (eachTPlayer.getRole().getNo()==index) {
-										if (!eachTPlayer.getRole().isDead()) {
-											if (eachTPlayer.getRole().getRole()==Roles.Doctor) {
-												tPlayer.getRole().setTargetPlayer(eachTPlayer);
-											}else if (eachTPlayer.getRole().getRole()==Roles.Veteran) {
-												if (eachTPlayer==tPlayer) {
+			event.setCancelled(true);
+			if (event.getAction()==Action.RIGHT_CLICK_BLOCK) {
+				TPlayer tPlayer = plugin.getPlayers().get(player);
+				if (tPlayer.getActiveLobby()!=null) {
+					if (!tPlayer.getRole().isDead()) {
+						if (tPlayer.getActiveLobby().getGameManager().isNight()) {
+							Door door = (Door) event.getClickedBlock().getState().getData();
+							for (Door eachDoor : tPlayer.getActiveLobby().getMap().getDoors()) {
+								if (door.equals(eachDoor)) {
+									int index = tPlayer.getActiveLobby().getMap().getDoors().indexOf(door);
+									for (TPlayer eachTPlayer : tPlayer.getActiveLobby().getPlayers().values()) {
+										if (eachTPlayer.getRole().getNo()==index) {
+											if (!eachTPlayer.getRole().isDead()) {
+												if (eachTPlayer.getRole().getRole()==Roles.Doctor) {
 													tPlayer.getRole().setTargetPlayer(eachTPlayer);
-												}
-											}else {
-												if (tPlayer!=eachTPlayer) {
-													tPlayer.getRole().setTargetPlayer(eachTPlayer);
+													tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+												}else if (eachTPlayer.getRole().getRole()==Roles.Veteran) {
+													if (eachTPlayer==tPlayer) {
+														tPlayer.getRole().setTargetPlayer(eachTPlayer);
+														tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+													}
+												}else {
+													if (tPlayer!=eachTPlayer) {
+														tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+														tPlayer.getRole().setTargetPlayer(eachTPlayer);
+													}
 												}
 											}
 										}

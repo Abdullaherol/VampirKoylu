@@ -2,77 +2,134 @@ package com.olympos.tom.lobby;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+
 import com.olympos.tom.Main;
 import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.RoleQueue;
 import com.olympos.tom.properties.Roles;
 import com.olympos.tom.properties.Side;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class GameManager extends BukkitRunnable{
 
 	private Main plugin;
 	private Lobby lobby;
-	private int day;
-	private int time = 0; 
+	private int day = 0;
+	private int time = 30; 
 	private boolean night = false;
 	private boolean vote = true; //at first day true
 	private boolean dead = true; //at first day true
-	private boolean discussion = false;
+	private boolean discussion = true;
+	private boolean voteDead = true;
 	private HashMap<Roles, Player> players;
+	private Scoreboard scoreboard;
+	private ScoreboardManager scoreboardManager;
+	private HashMap<Player, BossBar> bossbars;
 	//30sn day,30sn night
 	
 	public GameManager(Main plugin,Lobby lobby) {
 		this.lobby = lobby;
 		this.plugin = plugin;
+		bossbars = new HashMap<Player, BossBar>();
+		scoreboardManager = Bukkit.getScoreboardManager();
 		this.runTaskTimer(plugin, 60, 20);
 	}
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
-		System.out.println(time);
+		System.out.println("time: "+time+" night: "+night+" vote: "+vote+" dead: "+dead+" discussion: "+discussion+" day: "+day);
 		if (lobby.isStarted()) {
-			if (time==0) {
+			
+			if (time<=0) {
 				if (dead) {
 					if (discussion) {
 						if (vote) {
-							if (night) {
-								//at finish night
-								night=false;
-								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
-									eachTPlayer.getPlayer().setPlayerTime(18000, true);
-									if (!eachTPlayer.getRole().isDead()) {
-										for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
-											if (!otherTPlayer.getRole().isDead()) {
-												eachTPlayer.getPlayer().showPlayer(otherTPlayer.getPlayer());
-												
+							if (voteDead) {
+								if (night) {
+									//at finish night
+									
+									day++;
+									for (int i = 1; i < RoleQueue.values().length; i++) {
+										for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+											if (!eachTPlayer.getRole().isDead()) {
+												if (eachTPlayer.getRole().getQueue()==RoleQueue.values()[i]) {
+													eachTPlayer.getRole().go(eachTPlayer.getRole().getTargetPlayer());
+												}
 											}
 										}
 									}
-								}
-								
-								for (int i = 1; i < RoleQueue.values().length; i++) {
+									
 									for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+										eachTPlayer.getPlayer().setPlayerTime(0, false);
 										if (!eachTPlayer.getRole().isDead()) {
-											if (eachTPlayer.getRole().getQueue()==RoleQueue.values()[i]) {
-												eachTPlayer.getRole().go(eachTPlayer.getRole().getTargetPlayer());
+											for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+												if (!otherTPlayer.getRole().isDead()) {
+													eachTPlayer.getPlayer().showPlayer(otherTPlayer.getPlayer());
+													System.out.println("sa");
+												}
 											}
 										}
 									}
-								}
-							}else {
-								
-								for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
-									eachTPlayer.getPlayer().setPlayerTime(6000, true);
-									if (!eachTPlayer.getRole().isDead()) {
-										if (eachTPlayer.getRole().getSide()==Side.Town) {
-											if (eachTPlayer.getRole().getRole()==Roles.Jailor) {
-												if (eachTPlayer.getRole().getTargetPlayer()!=null) {
-													eachTPlayer.getPlayer().teleport(lobby.getMap().getJaiLocation());
-													Player jailed = eachTPlayer.getRole().getTargetPlayer().getPlayer();
-													eachTPlayer.getPlayer().showPlayer(jailed);
-													jailed.showPlayer(eachTPlayer.getPlayer());
+									night=false;
+									vote=false;
+									dead=false;
+									discussion=false;
+								}else {
+									
+									for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+										eachTPlayer.getPlayer().setPlayerTime(12000, false);
+										if (!eachTPlayer.getRole().isDead()) {
+											if (eachTPlayer.getRole().getSide()==Side.Town) {
+												if (eachTPlayer.getRole().getRole()==Roles.Jailor) {
+													if (eachTPlayer.getRole().getTargetPlayer()!=null) {
+														eachTPlayer.getPlayer().teleport(lobby.getMap().getJaiLocation());
+														Player jailed = eachTPlayer.getRole().getTargetPlayer().getPlayer();
+														eachTPlayer.getPlayer().showPlayer(jailed);
+														jailed.showPlayer(eachTPlayer.getPlayer());
+													}else {
+														for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+															if (!otherTPlayer.getRole().isDead()) {
+																if (otherTPlayer!=eachTPlayer) {
+																	eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
+																}
+															}
+														}
+													}
+												}else {
+													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+														if (!otherTPlayer.getRole().isDead() && !otherTPlayer.getRole().isJailed()) {
+															if (otherTPlayer!=eachTPlayer) {
+																eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
+															}
+														}
+													}
+												}
+											}else if (eachTPlayer.getRole().getSide()==Side.Neutral) {
+												if (eachTPlayer.getRole().getRole()==Roles.Vampire) {
+													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+														if (!otherTPlayer.getRole().isDead()) {
+															if (otherTPlayer!=eachTPlayer) {
+																if (otherTPlayer.getRole().getRole()==Roles.Vampire) {
+																	
+																}else {
+																	eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
+																}
+															}
+														}
+													}
 												}else {
 													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 														if (!otherTPlayer.getRole().isDead()) {
@@ -84,44 +141,25 @@ public class GameManager extends BukkitRunnable{
 												}
 											}else {
 												for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
-													if (!otherTPlayer.getRole().isDead() && !otherTPlayer.getRole().isJailed()) {
-														if (otherTPlayer!=eachTPlayer) {
-															eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
-														}
-													}
-												}
-											}
-										}else if (eachTPlayer.getRole().getSide()==Side.Neutral) {
-											if (eachTPlayer.getRole().getRole()==Roles.Vampire) {
-												for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 													if (!otherTPlayer.getRole().isDead()) {
 														if (otherTPlayer!=eachTPlayer) {
-															if (otherTPlayer.getRole().getRole()==Roles.Vampire) {
-																
-															}else {
+															if (otherTPlayer.getRole().getSide()!=Side.Mafia) {
 																eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
 															}
-														}
-													}
-												}
-											}else {
-												for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
-													if (!otherTPlayer.getRole().isDead()) {
-														if (otherTPlayer!=eachTPlayer) {
-															eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
 														}
 													}
 												}
 											}
 										}
 									}
+									
+									night=true;
+									
+									time =30;
 								}
-								
-								night=true;
-								vote=false;
-								dead=false;
-								discussion=false;
-								time =30;
+							}else {
+								voteDead=true;
+								time=5;
 							}
 						}else {
 							time=10;
@@ -140,6 +178,41 @@ public class GameManager extends BukkitRunnable{
 			}else {
 				time--;	
 			}
+			
+			String[] titles = {"Players: "+lobby.getPlayers().size(),"Time: "+time,"Day: "+day,"Night: "+night,"Discussion: "+discussion};
+			int[] scores = {5,4,3,2,1};
+			scoreboard = scoreboardGenerator("Town of Minecraft",titles, scores);
+			for (Player player: lobby.getPlayers().keySet()) {
+				player.setScoreboard(scoreboard);
+				TPlayer tPlayer = lobby.getPlayers().get(player);
+				if (!tPlayer.getRole().isDead()) {
+					if (bossbars.containsKey(player)) {
+						BossBar bossBar = bossbars.get(player);
+					}else {
+						
+						switch (tPlayer.getRole().getSide()) {
+						case Town:
+							BossBar bossBar = Bukkit.createBossBar(ChatColor.GREEN+tPlayer.getRole().getRole().toString(), BarColor.WHITE, BarStyle.SOLID, BarFlag.DARKEN_SKY);
+							bossBar.addPlayer(player);
+							bossbars.put(player, bossBar);
+							break;
+						case Mafia:
+							BossBar bossBar2 = Bukkit.createBossBar(ChatColor.RED+tPlayer.getRole().getRole().toString(), BarColor.WHITE, BarStyle.SOLID, BarFlag.DARKEN_SKY);
+							bossBar2.addPlayer(player);
+							bossbars.put(player, bossBar2);
+							break;
+						case Neutral:
+							BossBar bossBar3 = Bukkit.createBossBar(ChatColor.DARK_GRAY+tPlayer.getRole().getRole().toString(), BarColor.WHITE, BarStyle.SOLID, BarFlag.DARKEN_SKY);
+							bossBar3.addPlayer(player);
+							bossbars.put(player, bossBar3);
+							break;
+						}
+					}
+				}
+			}
+			
+			
+			
 		}
 	
 	
@@ -192,5 +265,18 @@ public class GameManager extends BukkitRunnable{
 	public void setPlayers(HashMap<Roles, Player> players) {
 		this.players = players;
 	}
-
+	public Scoreboard scoreboardGenerator(String title,String[] scoreTitles,int[] scores) {
+		Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
+		
+		Objective objective = scoreboard.registerNewObjective("Lobby", "");
+		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		objective.setDisplayName(title);
+		
+		for (int i = 0; i < scoreTitles.length; i++) {
+			Score score = objective.getScore(scoreTitles[i]);
+			score.setScore(scores[i]);
+		}
+		
+		return scoreboard;
+	}
 }

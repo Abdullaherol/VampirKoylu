@@ -1,6 +1,7 @@
 package com.olympos.tom.command;
 
 import org.bukkit.ChatColor;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,12 +39,14 @@ public class CMap implements CommandExecutor {
 						Map map = new Map(value2);
 						plugin.getMaps().put(value2, map);
 						player.sendMessage(ChatColor.GRAY+"map created");
+						plugin.getDatamap().Save(map);
 						break;
 					case "houseIn":
 						if (plugin.getMaps().containsKey(value2)) {
 							Map map2 = plugin.getMaps().get(value2);
 							map2.getHomesIn().add(player.getLocation());
 							player.sendMessage(ChatColor.GRAY+"houseIn added");
+							plugin.getDatamap().Save(map2);
 						}
 						break;
 					case "houseOut":
@@ -51,21 +54,26 @@ public class CMap implements CommandExecutor {
 							Map map2 = plugin.getMaps().get(value2);
 							map2.getHomesOut().add(player.getLocation());
 							player.sendMessage(ChatColor.GRAY+"houseOut added");
+							plugin.getDatamap().Save(map2);
 						}
 						break;
 					case "sign":
 						if (plugin.getMaps().containsKey(value2)) {
 							Map map2 = plugin.getMaps().get(value2);
-							map2.getSigns().add(player.getTargetBlock(null, 5));
+							map2.getSigns().add(player.getTargetBlock(null, 5).getLocation());
 							player.sendMessage(ChatColor.GRAY+"sign added");
+							plugin.getDatamap().Save(map2);
 						}
 						break;
 					case "door":
 						if (plugin.getMaps().containsKey(value2)) {
 							Map map2 = plugin.getMaps().get(value2);
-							Door door = (Door) player.getLocation().getBlock().getState().getData();
+							@SuppressWarnings("deprecation")
+							Door door = (Door) player.getTargetBlock(null, 5).getType().getNewData(player.getTargetBlock(null, 5).getData());
 							map2.getDoors().add(door);
+							map2.getDoorLocations().add(player.getTargetBlock(null, 5).getLocation());
 							player.sendMessage(ChatColor.GRAY+"door added");
+							plugin.getDatamap().Save(map2);
 							
 
 						}
@@ -75,6 +83,7 @@ public class CMap implements CommandExecutor {
 							Map map2 = plugin.getMaps().get(value2);
 							map2.setHangLocation(player.getLocation());
 							player.sendMessage(ChatColor.GRAY+"hang location created");
+							plugin.getDatamap().Save(map2);
 						}
 						break;
 					default:

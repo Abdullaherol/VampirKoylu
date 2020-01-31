@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.olympos.tom.Main;
 import com.olympos.tom.lobby.Lobby;
+import com.olympos.tom.object.TPlayer;
 
 public class CPlay implements CommandExecutor{
 
@@ -27,6 +28,10 @@ public class CPlay implements CommandExecutor{
 	public boolean onCommand(CommandSender arg0, Command arg1, String arg2, String[] arg3) {
 		if (arg0 instanceof Player) {
 			Player player = (Player)arg0;
+			if (!plugin.getPlayers().containsKey(player)) {
+				TPlayer tPlayer = new TPlayer(null, player, null);
+				plugin.getPlayers().put(player, tPlayer);
+			}
 			if (!plugin.getLobbies().containsKey(player)) {
 				plugin.getLobbies().put(player, new ArrayList<Lobby>());
 			}

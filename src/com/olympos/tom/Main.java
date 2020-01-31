@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.olympos.tom.command.CPlay;
+import com.olympos.tom.data.DataMap;
 import com.olympos.tom.gui.LobbyGui;
 import com.olympos.tom.handler.MainHandler;
 import com.olympos.tom.command.CMap;
@@ -32,11 +33,16 @@ public class Main extends JavaPlugin{
 	private HashMap<Player, ArrayList<Lobby>> lobbies;
 	private ArrayList<Lobby> readyLobbies;
 	private LobbyGui lobbyGui;
+	private DataMap datamap;
 	
 	@Override
 	public void onEnable() {
-		players = new HashMap<Player, TPlayer>();
+		if (!getDataFolder().mkdirs()) {
+			getDataFolder().exists();
+		}
 		maps = new HashMap<String, Map>();
+		datamap = new DataMap(this);
+		players = new HashMap<Player, TPlayer>();
 		lobbies = new HashMap<Player, ArrayList<Lobby>>();
 		lobbyGui = new LobbyGui(this);
 		readyLobbies = new ArrayList<Lobby>();
@@ -49,7 +55,11 @@ public class Main extends JavaPlugin{
 	
 	@Override
 	public void onDisable() {
-		// TODO Auto-generated method stub
+		if (maps.size()!=0) {
+			for (Map map : maps.values()) {
+				datamap.Save(map);
+			}
+		}
 		super.onDisable();
 	}
 
@@ -91,6 +101,14 @@ public class Main extends JavaPlugin{
 
 	public void setReadyLobbies(ArrayList<Lobby> readyLobbies) {
 		this.readyLobbies = readyLobbies;
+	}
+
+	public DataMap getDatamap() {
+		return datamap;
+	}
+
+	public void setDatamap(DataMap datamap) {
+		this.datamap = datamap;
 	}
 
 	

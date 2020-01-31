@@ -13,7 +13,8 @@ public class Map {
 	private ArrayList<Location> homesIn;
 	private ArrayList<Location> homesOut;
 	private ArrayList<Door> doors;
-	private ArrayList<Block> signs;
+	private ArrayList<Location> doorLocations;
+	private ArrayList<Location> signs;
 	private Location hangLocation;
 	private Location jaiLocation;
 	
@@ -22,12 +23,20 @@ public class Map {
 		homesIn = new ArrayList<Location>();
 		homesOut = new ArrayList<Location>();
 		doors = new ArrayList<Door>();
-		signs = new ArrayList<Block>();
-		
+		signs = new ArrayList<Location>();
+		doorLocations = new ArrayList<Location>();
 	}
 
 	public Location getJaiLocation() {
 		return jaiLocation;
+	}
+
+	public ArrayList<Location> getDoorLocations() {
+		return doorLocations;
+	}
+
+	public void setDoorLocations(ArrayList<Location> doorLocations) {
+		this.doorLocations = doorLocations;
 	}
 
 	public void setJaiLocation(Location jaiLocation) {
@@ -74,11 +83,11 @@ public class Map {
 		this.doors = doors;
 	}
 
-	public ArrayList<Block> getSigns() {
+	public ArrayList<Location> getSigns() {
 		return signs;
 	}
 
-	public void setSigns(ArrayList<Block> signs) {
+	public void setSigns(ArrayList<Location> signs) {
 		this.signs = signs;
 	}
 
