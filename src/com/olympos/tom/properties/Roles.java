@@ -7,10 +7,10 @@ public enum Roles {
 	Spy, //finish 
 	Jailor, //finish ***  1
 	Veteran, //finish  
-	Bodyguard, // 3
+	Bodyguard, //finish 3
 	Doctor, //finish *** 3
-	Escort, // *** 2
-	Medium,// *** 
+	Escort, //finish *** 2
+	Medium,//finish *** 
 	Godfather,// finish*** 5
 	Mafia,// finish *** 5
 	Blackmailer,  // 5
