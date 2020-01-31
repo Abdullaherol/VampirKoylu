@@ -106,9 +106,9 @@ public class MainHandler implements Listener{
 							player.sendMessage(ChatColor.RED+"You have to choose a map!");
 						}else {
 							ArrayList<Roles> mustRoles = new ArrayList<Roles>();
-							mustRoles.add(Roles.Investigator);
+							//mustRoles.add(Roles.Investigator);
 							mustRoles.add(Roles.Doctor);
-							mustRoles.add(Roles.Jailor);
+							//mustRoles.add(Roles.Jailor);
 							//mustRoles.add(Roles.Medium);
 							//mustRoles.add(Roles.Escort);
 							mustRoles.add(Roles.Godfather);
@@ -144,6 +144,7 @@ public class MainHandler implements Listener{
 		}
 	}
 	
+	@EventHandler
 	public void onChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 		TPlayer tPlayer = plugin.getPlayers().get(player);
@@ -218,13 +219,14 @@ public class MainHandler implements Listener{
 			}
 		}
 	}
-	
+	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		if (!player.isOp()) {
 			event.setCancelled(true);
 		}
 	}
+	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		if (!player.isOp()) {
@@ -232,34 +234,38 @@ public class MainHandler implements Listener{
 		}
 	}
 	//on click to door
+	@EventHandler
 	public void onClickBlock(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (event.getClickedBlock().getType().toString().contains("door")) {
-			event.setCancelled(true);
-			if (event.getAction()==Action.RIGHT_CLICK_BLOCK) {
-				TPlayer tPlayer = plugin.getPlayers().get(player);
-				if (tPlayer.getActiveLobby()!=null) {
-					if (!tPlayer.getRole().isDead()) {
-						if (tPlayer.getActiveLobby().getGameManager().isNight()) {
-							Door door = (Door) event.getClickedBlock().getState().getData();
-							for (Door eachDoor : tPlayer.getActiveLobby().getMap().getDoors()) {
-								if (door.equals(eachDoor)) {
-									int index = tPlayer.getActiveLobby().getMap().getDoors().indexOf(door);
-									for (TPlayer eachTPlayer : tPlayer.getActiveLobby().getPlayers().values()) {
-										if (eachTPlayer.getRole().getNo()==index) {
-											if (!eachTPlayer.getRole().isDead()) {
-												if (eachTPlayer.getRole().getRole()==Roles.Doctor) {
-													tPlayer.getRole().setTargetPlayer(eachTPlayer);
-													tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
-												}else if (eachTPlayer.getRole().getRole()==Roles.Veteran) {
-													if (eachTPlayer==tPlayer) {
+		if (event.getClickedBlock()!=null) {
+			if (event.getClickedBlock().getType().toString().contains("DOOR")) {
+				event.setCancelled(true);
+				if (event.getAction()==Action.RIGHT_CLICK_BLOCK) {
+					TPlayer tPlayer = plugin.getPlayers().get(player);
+					if (tPlayer.getActiveLobby()!=null) {
+						if (!tPlayer.getRole().isDead()) {
+							if (tPlayer.getActiveLobby().getGameManager().isNight()) {
+								Door door = (Door) event.getClickedBlock().getState().getData();
+								for (Door eachDoor : tPlayer.getActiveLobby().getMap().getDoors()) {
+									if (door.equals(eachDoor)) {
+										int index = tPlayer.getActiveLobby().getMap().getDoors().indexOf(door);
+										for (TPlayer eachTPlayer : tPlayer.getActiveLobby().getPlayers().values()) {
+											if (eachTPlayer.getRole().getNo()==index) {
+												if (!eachTPlayer.getRole().isDead()) {
+													System.out.println(eachTPlayer.getPlayer() +"  -  "+tPlayer.getPlayer()+"  -  "+eachTPlayer.getRole().getNo()+"  -  "+index);
+													if (eachTPlayer.getRole().getRole()==Roles.Doctor) {
 														tPlayer.getRole().setTargetPlayer(eachTPlayer);
 														tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
-													}
-												}else {
-													if (tPlayer!=eachTPlayer) {
-														tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
-														tPlayer.getRole().setTargetPlayer(eachTPlayer);
+													}else if (eachTPlayer.getRole().getRole()==Roles.Veteran) {
+														if (eachTPlayer==tPlayer) {
+															tPlayer.getRole().setTargetPlayer(eachTPlayer);
+															tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+														}
+													}else {
+														if (tPlayer!=eachTPlayer) {
+															tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+															tPlayer.getRole().setTargetPlayer(eachTPlayer);
+														}
 													}
 												}
 											}

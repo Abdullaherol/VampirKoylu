@@ -40,7 +40,7 @@ public class Doctor extends ARole{
 								}else targetPlayer.getRole().setHealed(true);
 								break;
 							default:
-								if (getPlayer()==getTargetPlayer().getPlayer()) {
+								if (getPlayer()==targetPlayer) {
 									if (getUse()>0) {
 										targetPlayer.getRole().setHealed(true);
 										setUse(getUse()-1);

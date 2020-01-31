@@ -73,8 +73,14 @@ public class GameManager extends BukkitRunnable{
 									}
 									
 									for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
-										eachTPlayer.getPlayer().setPlayerTime(0, false);
+										eachTPlayer.getPlayer().setPlayerTime(6000, false);
 										if (!eachTPlayer.getRole().isDead()) {
+											eachTPlayer.getRole().setBlocked(false);
+											eachTPlayer.getRole().setHealed(false);
+											eachTPlayer.getRole().setBodyguard(null);
+											eachTPlayer.getRole().setJailed(false);
+											eachTPlayer.getRole().setTargetPlayer(null);
+											eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
 											for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 												if (!otherTPlayer.getRole().isDead()) {
 													eachTPlayer.getPlayer().showPlayer(otherTPlayer.getPlayer());
@@ -90,9 +96,10 @@ public class GameManager extends BukkitRunnable{
 								}else {
 									
 									for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
-										eachTPlayer.getPlayer().setPlayerTime(12000, false);
+										eachTPlayer.getPlayer().setPlayerTime(18000, false);
 										if (!eachTPlayer.getRole().isDead()) {
 											if (eachTPlayer.getRole().getSide()==Side.Town) {
+												eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesIn().get(eachTPlayer.getRole().getNo()));
 												if (eachTPlayer.getRole().getRole()==Roles.Jailor) {
 													if (eachTPlayer.getRole().getTargetPlayer()!=null) {
 														eachTPlayer.getPlayer().teleport(lobby.getMap().getJaiLocation());
@@ -118,7 +125,8 @@ public class GameManager extends BukkitRunnable{
 													}
 												}
 											}else if (eachTPlayer.getRole().getSide()==Side.Neutral) {
-												if (eachTPlayer.getRole().getRole()==Roles.Vampire) {
+												if (eachTPlayer.getRole().getRole()==Roles.Vampire) {	
+													eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
 													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 														if (!otherTPlayer.getRole().isDead()) {
 															if (otherTPlayer!=eachTPlayer) {
@@ -131,6 +139,9 @@ public class GameManager extends BukkitRunnable{
 														}
 													}
 												}else {
+													if (eachTPlayer.getRole().getRole()==Roles.Jester) {
+														eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesIn().get(eachTPlayer.getRole().getNo()));
+													}else eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
 													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 														if (!otherTPlayer.getRole().isDead()) {
 															if (otherTPlayer!=eachTPlayer) {
@@ -140,6 +151,7 @@ public class GameManager extends BukkitRunnable{
 													}
 												}
 											}else {
+												eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
 												for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 													if (!otherTPlayer.getRole().isDead()) {
 														if (otherTPlayer!=eachTPlayer) {
@@ -179,12 +191,15 @@ public class GameManager extends BukkitRunnable{
 				time--;	
 			}
 			
-			String[] titles = {"Players: "+lobby.getPlayers().size(),"Time: "+time,"Day: "+day,"Night: "+night,"Discussion: "+discussion};
-			int[] scores = {5,4,3,2,1};
-			scoreboard = scoreboardGenerator("Town of Minecraft",titles, scores);
 			for (Player player: lobby.getPlayers().keySet()) {
-				player.setScoreboard(scoreboard);
 				TPlayer tPlayer = lobby.getPlayers().get(player);
+				String[] titles = {"Players: "+lobby.getPlayers().size(),"Time: "+time,"Day: "+day,"Night: "+night,"Discussion: "+discussion,"Dead: "+tPlayer.getRole().isDead()};
+				int[] scores = {6,5,4,3,2,1};
+				scoreboard = scoreboardGenerator("Town of Minecraft",titles, scores);
+				
+				
+				player.setScoreboard(scoreboard);
+				
 				if (!tPlayer.getRole().isDead()) {
 					if (bossbars.containsKey(player)) {
 						BossBar bossBar = bossbars.get(player);

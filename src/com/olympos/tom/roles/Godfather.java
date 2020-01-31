@@ -60,7 +60,16 @@ public class Godfather extends ARole{
 								}
 								break;
 							default:
-								targetPlayer.getRole().setDead(true);
+								if (!targetPlayer.getRole().isHealed()) {
+									if (targetPlayer.getRole().getBodyguard()==null) {
+										targetPlayer.getRole().setDead(true);
+									}else {
+										if (!targetPlayer.getRole().getBodyguard().getRole().isDead()) {
+											targetPlayer.getRole().getBodyguard().getRole().setDead(true);
+											setDead(true);
+										}
+									}
+								}
 								break;
 							}
 						}else {
