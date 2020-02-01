@@ -1,5 +1,7 @@
 package com.olympos.tom.roles;
 
+import org.bukkit.GameMode;
+
 import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.Chat;
 import com.olympos.tom.properties.Dead;
@@ -130,6 +132,7 @@ public abstract class ARole {
 		this.dead = dead;
 		if (dead) {
 			chat = Chat.dead;
+			player.getPlayer().setGameMode(GameMode.SPECTATOR);
 		}
 	}
 	public boolean isBlocked() {

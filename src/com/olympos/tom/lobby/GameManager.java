@@ -18,6 +18,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import com.olympos.tom.Main;
 import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.RoleQueue;
+import com.olympos.tom.properties.RoleType;
 import com.olympos.tom.properties.Roles;
 import com.olympos.tom.properties.Side;
 
@@ -50,7 +51,6 @@ public class GameManager extends BukkitRunnable{
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
-		System.out.println("time: "+time+" night: "+night+" vote: "+vote+" dead: "+dead+" discussion: "+discussion+" day: "+day);
 		if (lobby.isStarted()) {
 			
 			if (time<=0) {
@@ -84,8 +84,11 @@ public class GameManager extends BukkitRunnable{
 											for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 												if (!otherTPlayer.getRole().isDead()) {
 													eachTPlayer.getPlayer().showPlayer(otherTPlayer.getPlayer());
-													System.out.println("sa");
 												}
+											}
+										}else {
+											for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+													eachTPlayer.getPlayer().showPlayer(otherTPlayer.getPlayer());
 											}
 										}
 									}
@@ -97,9 +100,11 @@ public class GameManager extends BukkitRunnable{
 									
 									for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
 										eachTPlayer.getPlayer().setPlayerTime(18000, false);
+										if (eachTPlayer.getRole().getRoleType()==RoleType.Visit) {
+											eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
+										}else eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesIn().get(eachTPlayer.getRole().getNo()));
 										if (!eachTPlayer.getRole().isDead()) {
 											if (eachTPlayer.getRole().getSide()==Side.Town) {
-												eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesIn().get(eachTPlayer.getRole().getNo()));
 												if (eachTPlayer.getRole().getRole()==Roles.Jailor) {
 													if (eachTPlayer.getRole().getTargetPlayer()!=null) {
 														eachTPlayer.getPlayer().teleport(lobby.getMap().getJaiLocation());
@@ -119,6 +124,7 @@ public class GameManager extends BukkitRunnable{
 													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 														if (!otherTPlayer.getRole().isDead() && !otherTPlayer.getRole().isJailed()) {
 															if (otherTPlayer!=eachTPlayer) {
+																System.out.println("Town Hide");
 																eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
 															}
 														}
@@ -126,7 +132,6 @@ public class GameManager extends BukkitRunnable{
 												}
 											}else if (eachTPlayer.getRole().getSide()==Side.Neutral) {
 												if (eachTPlayer.getRole().getRole()==Roles.Vampire) {	
-													eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
 													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 														if (!otherTPlayer.getRole().isDead()) {
 															if (otherTPlayer!=eachTPlayer) {
@@ -139,9 +144,7 @@ public class GameManager extends BukkitRunnable{
 														}
 													}
 												}else {
-													if (eachTPlayer.getRole().getRole()==Roles.Jester) {
-														eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesIn().get(eachTPlayer.getRole().getNo()));
-													}else eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
+													
 													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 														if (!otherTPlayer.getRole().isDead()) {
 															if (otherTPlayer!=eachTPlayer) {
@@ -151,11 +154,11 @@ public class GameManager extends BukkitRunnable{
 													}
 												}
 											}else {
-												eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
 												for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 													if (!otherTPlayer.getRole().isDead()) {
 														if (otherTPlayer!=eachTPlayer) {
 															if (otherTPlayer.getRole().getSide()!=Side.Mafia) {
+																System.out.println("Mafia Hide");
 																eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
 															}
 														}
