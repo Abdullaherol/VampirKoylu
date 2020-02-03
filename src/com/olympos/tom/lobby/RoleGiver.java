@@ -1,5 +1,8 @@
 package com.olympos.tom.lobby;
 
+import org.bukkit.Location;
+import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -17,10 +20,14 @@ import com.olympos.tom.roles.Doctor;
 import com.olympos.tom.roles.Godfather;
 import com.olympos.tom.roles.Investigator;
 import com.olympos.tom.roles.Jailor;
+import com.olympos.tom.roles.Medium;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_12_R1.PacketPlayOutTitle;
+import net.minecraft.server.v1_12_R1.PacketPlayOutTitle.EnumTitleAction;
 
 public class RoleGiver extends BukkitRunnable{
 
@@ -49,7 +56,7 @@ public class RoleGiver extends BukkitRunnable{
 					switch (lobby.getSelectedRoles().get(random)) {
 					case Investigator:
 						ARole aRole = new Investigator(i, Roles.Investigator, -1, Chat.town, Dead.normal,
-								Side.Town, false, false, false, false, null, RoleType.InHome, tPlayer, RoleTime.Night, null, RoleQueue.a4);
+								Side.Town, false, false, false, false, null, RoleType.InHome, tPlayer, RoleTime.Night, null, RoleQueue.a4,null);
 						lobby.getSelectedRoles().remove(Roles.Investigator);
 						tPlayer.setRole(aRole);
 						break;
@@ -61,7 +68,7 @@ public class RoleGiver extends BukkitRunnable{
 						break;
 					case Doctor:
 						ARole doctor = new Doctor(i, Roles.Doctor, 1, Chat.town, Dead.normal,
-								Side.Town, false, false, false, false, null, RoleType.Visit, tPlayer, RoleTime.Night, null, RoleQueue.a3);
+								Side.Town, false, false, false, false, null, RoleType.Visit, tPlayer, RoleTime.Night, null, RoleQueue.a3,null);
 						lobby.getSelectedRoles().remove(Roles.Doctor);
 						tPlayer.setRole(doctor);
 						break;
@@ -69,13 +76,13 @@ public class RoleGiver extends BukkitRunnable{
 						break;
 					case Godfather:
 						ARole godfather = new Godfather(i, Roles.Godfather, -1, Chat.mafia, Dead.werewolf,
-								Side.Mafia, false, false, false, false, null, RoleType.Visit, tPlayer, RoleTime.Night, null, RoleQueue.a5);
+								Side.Mafia, false, false, false, false, null, RoleType.Visit, tPlayer, RoleTime.Night, null, RoleQueue.a5,null);
 						lobby.getSelectedRoles().remove(Roles.Godfather);
 						tPlayer.setRole(godfather);
 						break;
 					case Jailor:
 						ARole jailor = new Jailor(i, Roles.Jailor, -1, Chat.town, Dead.normal,
-								Side.Town, false, false, false, false, null, RoleType.Visit, tPlayer, RoleTime.Night, null, RoleQueue.a1);
+								Side.Town, false, false, false, false, null, RoleType.Visit, tPlayer, RoleTime.Night, null, RoleQueue.a1,null);
 						lobby.getSelectedRoles().remove(Roles.Jailor);
 						tPlayer.setRole(jailor);
 						break;
@@ -86,6 +93,10 @@ public class RoleGiver extends BukkitRunnable{
 					case Mafia:
 						break;
 					case Medium:
+						ARole medium = new Medium(i, Roles.Medium, -1, Chat.medium, Dead.normal, Side.Town, false, false, false, false, null,
+								RoleType.InHome, tPlayer, RoleTime.Night, null, RoleQueue.a0, null);
+						lobby.getSelectedRoles().remove(Roles.Medium);
+						tPlayer.setRole(medium);
 						break;
 					case Sheriff:
 						break;
@@ -107,13 +118,13 @@ public class RoleGiver extends BukkitRunnable{
 						TPlayer tPlayer = lobby.getPlayers().get(eachPlayer);
 						switch (tPlayer.getRole().getSide()) {
 						case Town:
-							eachPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(""+tPlayer.getRole().getRole().toString()).color(ChatColor.GREEN).create());
+							eachPlayer.sendTitle(ChatColor.GREEN+tPlayer.getRole().getRole().toString(), ChatColor.GREEN+"Town", 1, 20, 1);
 							break;
 						case Mafia:
-							eachPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(""+tPlayer.getRole().getRole().toString()).color(ChatColor.RED).create());
+							eachPlayer.sendTitle(ChatColor.RED+tPlayer.getRole().getRole().toString(), ChatColor.RED+"Mafia", 1, 20, 1);
 							break;
 						case Neutral:
-							eachPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(""+tPlayer.getRole().getRole().toString()).color(ChatColor.DARK_GRAY).create());
+							eachPlayer.sendTitle(ChatColor.GRAY+tPlayer.getRole().getRole().toString(), ChatColor.GRAY+"Neutral", 1, 20, 1);
 							break;
 						default:
 							break;
@@ -122,11 +133,26 @@ public class RoleGiver extends BukkitRunnable{
 						System.out.println(lobby.getMap().getHomesOut().size());
 						eachPlayer.teleport(lobby.getMap().getHomesOut().get(tPlayer.getRole().getNo()));
 					}
+					
+					for (int j = 0; j < lobby.getMap().getSigns().size(); j++) {
+						Sign sign = (Sign) lobby.getMap().getSigns().get(j).getBlock().getState();
+						for (int k = 0; k < 4; k++) {
+							sign.setLine(k, "");
+						}
+						sign.update();
+					}
+					for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
+						eachTPlayer.getPlayer().setWalkSpeed(0.5f);
+						Sign sign = (Sign) lobby.getMap().getSigns().get(eachTPlayer.getRole().getNo()).getBlock().getState();
+						sign.setLine(0, ChatColor.GRAY+"["+ChatColor.WHITE+eachTPlayer.getPlayer().getName()+ChatColor.GRAY+"]");
+						sign.setLine(1, ChatColor.GREEN+"Alive");
+						sign.update();
+					}
 					lobby.setStarted(true);
 					this.cancel();
 				}else {
 					for (Player eachPlayer : lobby.getPlayers().keySet()) {
-						eachPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(""+time).color(ChatColor.AQUA).create());
+						eachPlayer.sendTitle(ChatColor.GREEN+String.valueOf(time), "Town of Minecraft", 1, 20, 1);
 					}
 					time--;
 				}

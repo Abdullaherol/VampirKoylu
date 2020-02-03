@@ -1,8 +1,9 @@
 name: TownofMinecraft
-version: 0.01
+version: 0.24
 author: Liftedplane
 main: com.olympos.tom.Main
 commands:
   map:
   play:
   jailor:
+  vote:

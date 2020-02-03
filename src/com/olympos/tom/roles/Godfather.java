@@ -13,12 +13,11 @@ import com.olympos.tom.properties.Side;
 
 public class Godfather extends ARole{
 
-
 	public Godfather(int no, Roles role, int use, Chat chat, Dead deadType, Side side, boolean dead, boolean blocked,
 			boolean jailed, boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player, RoleTime roleTime,
-			TPlayer bodyguard, RoleQueue queue) {
+			TPlayer bodyguard, RoleQueue queue, TPlayer vote) {
 		super(no, role, use, chat, deadType, side, dead, blocked, jailed, healed, targetPlayer, roleType, player, roleTime,
-				bodyguard, queue);
+				bodyguard, queue, vote);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -91,7 +90,7 @@ public class Godfather extends ARole{
 					if (eachTPlayer!=getPlayer()) {
 						if (eachTPlayer.getRole().getSide()==Side.Mafia) {
 							ARole aRole = new Godfather(eachTPlayer.getRole().getNo(), Roles.Godfather, -1, Chat.mafia, Dead.werewolf, Side.Mafia,
-									false, false, false, false, null, RoleType.Visit, eachTPlayer.getRole().getPlayer(), RoleTime.Night, null,RoleQueue.a5);
+									false, false, false, false, null, RoleType.Visit, eachTPlayer.getRole().getPlayer(), RoleTime.Night, null,RoleQueue.a5,null);
 							eachTPlayer.setRole(aRole);
 						}
 					}

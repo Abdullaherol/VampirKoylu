@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +27,7 @@ import com.olympos.tom.map.Map;
 import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.Chat;
 import com.olympos.tom.properties.Roles;
+import com.olympos.tom.properties.Side;
 import com.olympos.tom.roles.ARole;
 
 public class MainHandler implements Listener{
@@ -39,6 +42,8 @@ public class MainHandler implements Listener{
 		
 		if(event.getClickedInventory()==null) return;
 		if(event.getCurrentItem()==null) return;
+		if(event.getCurrentItem().getItemMeta()==null) return;
+		
 		Player player = (Player)event.getWhoClicked();
 		TPlayer tPlayer = plugin.getPlayers().get(player);
 		event.setCancelled(true);
@@ -61,6 +66,11 @@ public class MainHandler implements Listener{
 		case "Profile":
 			
 			break;
+		case "Vote":
+			Player player2 = Bukkit.getPlayer(event.getCurrentItem().getItemMeta().getDisplayName());
+			TPlayer tPlayer2 = plugin.getPlayers().get(player2);
+			tPlayer.getRole().setVote(tPlayer2);
+			break;
 		case "Join Lobby":
 			if (event.getClick()==ClickType.LEFT) {
 				//join this lobby
@@ -79,6 +89,7 @@ public class MainHandler implements Listener{
 				tPlayer.getRole().getTargetPlayer().getRole().setJailed(false);
 				tPlayer.getRole().setTargetPlayer(target);
 				target.getRole().setJailed(true);
+				plugin.getMainGui().vote(tPlayer);
 			}else {
 				tPlayer.getRole().setTargetPlayer(target);
 				target.getRole().setJailed(true);
@@ -88,7 +99,7 @@ public class MainHandler implements Listener{
 			if (event.getClickedInventory().getTitle().contains("Create Lobby")) {
 				int index = Integer.valueOf(event.getClickedInventory().getTitle().split("Create Lobby ")[1]);
 				Lobby lobby = plugin.getLobbies().get(player).get(index);
-				lobby.setSize(2); //sadsdasdas
+				lobby.setSize(4); //sadsdasdas
 				if (event.getCurrentItem().getType()==Material.GOLD_RECORD) {
 					Roles role = Roles.valueOf(event.getCurrentItem().getItemMeta().getDisplayName());
 					if (lobby.getSelectedRoles().contains(role)) {
@@ -108,8 +119,8 @@ public class MainHandler implements Listener{
 							ArrayList<Roles> mustRoles = new ArrayList<Roles>();
 							//mustRoles.add(Roles.Investigator);
 							mustRoles.add(Roles.Doctor);
-							//mustRoles.add(Roles.Jailor);
-							//mustRoles.add(Roles.Medium);
+							mustRoles.add(Roles.Jailor);
+							mustRoles.add(Roles.Medium);
 							//mustRoles.add(Roles.Escort);
 							mustRoles.add(Roles.Godfather);
 							//mustRoles.add(Roles.Mafia);
@@ -164,7 +175,7 @@ public class MainHandler implements Listener{
 						if (role.getChat()==Chat.medium) {
 							for (Player eachPlayer : lobby.getPlayers().keySet()) {
 								TPlayer Tplayer = lobby.getPlayers().get(eachPlayer);
-								if (Tplayer.getRole().getChat()==Chat.dead) {
+								if (Tplayer.getRole().getChat()==Chat.dead && tPlayer.getRole().getChat()==Chat.medium) {
 									eachPlayer.sendMessage("Medium: "+event.getMessage());
 								}
 							}
@@ -238,33 +249,38 @@ public class MainHandler implements Listener{
 	public void onClickBlock(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		if (event.getClickedBlock()!=null) {
-			if (event.getClickedBlock().getType().toString().contains("DOOR")) {
+			if (event.getClickedBlock().getType()==Material.WALL_SIGN) {
 				event.setCancelled(true);
 				if (event.getAction()==Action.RIGHT_CLICK_BLOCK) {
 					TPlayer tPlayer = plugin.getPlayers().get(player);
 					if (tPlayer.getActiveLobby()!=null) {
 						if (!tPlayer.getRole().isDead()) {
 							if (tPlayer.getActiveLobby().getGameManager().isNight()) {
-								Door door = (Door) event.getClickedBlock().getState().getData();
-								for (Door eachDoor : tPlayer.getActiveLobby().getMap().getDoors()) {
-									if (door.equals(eachDoor)) {
-										int index = tPlayer.getActiveLobby().getMap().getDoors().indexOf(door);
+								for (Location eachLocation : tPlayer.getActiveLobby().getMap().getSigns()) {
+									Block block = eachLocation.getBlock();
+									if (event.getClickedBlock().getLocation().equals(block.getLocation())) {
+										int index = tPlayer.getActiveLobby().getMap().getSigns().indexOf(eachLocation);
+										
 										for (TPlayer eachTPlayer : tPlayer.getActiveLobby().getPlayers().values()) {
 											if (eachTPlayer.getRole().getNo()==index) {
 												if (!eachTPlayer.getRole().isDead()) {
-													System.out.println(eachTPlayer.getPlayer() +"  -  "+tPlayer.getPlayer()+"  -  "+eachTPlayer.getRole().getNo()+"  -  "+index);
-													if (eachTPlayer.getRole().getRole()==Roles.Doctor) {
-														tPlayer.getRole().setTargetPlayer(eachTPlayer);
-														tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
-													}else if (eachTPlayer.getRole().getRole()==Roles.Veteran) {
+													System.out.println(eachTPlayer.getPlayer() +"  -  "+tPlayer.getPlayer()+"  -  "+eachTPlayer.getRole().getNo()+"  -  "+tPlayer.getRole().getNo()+"  -  "+index);
+													if (tPlayer.getRole().getRole()==Roles.Doctor) {
+														if (tPlayer.getRole().getTargetPlayer()!=eachTPlayer) {
+															tPlayer.getRole().setTargetPlayer(eachTPlayer);
+															tPlayer.getPlayer().sendMessage(ChatColor.GREEN+"Your target: "+ChatColor.GRAY+eachTPlayer.getPlayer().getName());
+														}
+													}else if (tPlayer.getRole().getRole()==Roles.Veteran) {
 														if (eachTPlayer==tPlayer) {
 															tPlayer.getRole().setTargetPlayer(eachTPlayer);
-															tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+															tPlayer.getPlayer().sendMessage(ChatColor.GRAY+"You will protect yourself tonight.");
 														}
 													}else {
 														if (tPlayer!=eachTPlayer) {
-															tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
 															tPlayer.getRole().setTargetPlayer(eachTPlayer);
+															if (tPlayer.getRole().getSide()==Side.Mafia) {
+																tPlayer.getPlayer().sendMessage(ChatColor.RED+"Your target: "+ChatColor.GRAY+eachTPlayer.getPlayer().getName());
+															}else tPlayer.getPlayer().sendMessage(ChatColor.GRAY+"Your target: "+ChatColor.GRAY+eachTPlayer.getPlayer().getName());
 														}
 													}
 												}
@@ -279,5 +295,48 @@ public class MainHandler implements Listener{
 			}
 		}
 	}
+	
+	/*Player player = event.getPlayer();
+	if (event.getClickedBlock()!=null) {
+		if (event.getClickedBlock().getType().toString().contains("DOOR")) {
+			event.setCancelled(true);
+			if (event.getAction()==Action.RIGHT_CLICK_BLOCK) {
+				TPlayer tPlayer = plugin.getPlayers().get(player);
+				if (tPlayer.getActiveLobby()!=null) {
+					if (!tPlayer.getRole().isDead()) {
+						if (tPlayer.getActiveLobby().getGameManager().isNight()) {
+							Door door = (Door) event.getClickedBlock().getState().getData();
+							for (Door eachDoor : tPlayer.getActiveLobby().getMap().getDoors()) {
+								if (door.equals(eachDoor)) {
+									int index = tPlayer.getActiveLobby().getMap().getDoors().indexOf(door);
+									for (TPlayer eachTPlayer : tPlayer.getActiveLobby().getPlayers().values()) {
+										if (eachTPlayer.getRole().getNo()==index) {
+											if (!eachTPlayer.getRole().isDead()) {
+												System.out.println(eachTPlayer.getPlayer() +"  -  "+tPlayer.getPlayer()+"  -  "+eachTPlayer.getRole().getNo()+"  -  "+tPlayer.getRole().getNo()+"  -  "+index);
+												if (eachTPlayer.getRole().getRole()==Roles.Doctor) {
+													tPlayer.getRole().setTargetPlayer(eachTPlayer);
+													tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+												}else if (eachTPlayer.getRole().getRole()==Roles.Veteran) {
+													if (eachTPlayer==tPlayer) {
+														tPlayer.getRole().setTargetPlayer(eachTPlayer);
+														tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+													}
+												}else {
+													if (tPlayer!=eachTPlayer) {
+														tPlayer.getPlayer().sendMessage("Your target: "+eachTPlayer.getPlayer().getName());
+														tPlayer.getRole().setTargetPlayer(eachTPlayer);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}*/
 }
 

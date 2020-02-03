@@ -61,7 +61,7 @@ public class CMap implements CommandExecutor {
 						if (plugin.getMaps().containsKey(value2)) {
 							Map map2 = plugin.getMaps().get(value2);
 							map2.getSigns().add(player.getTargetBlock(null, 5).getLocation());
-							player.sendMessage(ChatColor.GRAY+"sign added");
+							player.sendMessage(ChatColor.GRAY+"sign added "+player.getTargetBlock(null, 5).getType().toString());
 							plugin.getDatamap().Save(map2);
 						}
 						break;
@@ -83,6 +83,14 @@ public class CMap implements CommandExecutor {
 							Map map2 = plugin.getMaps().get(value2);
 							map2.setHangLocation(player.getLocation());
 							player.sendMessage(ChatColor.GRAY+"hang location created");
+							plugin.getDatamap().Save(map2);
+						}
+						break;
+					case "jail":
+						if (plugin.getMaps().containsKey(value2)) {
+							Map map2 = plugin.getMaps().get(value2);
+							map2.setJaiLocation(player.getLocation());
+							player.sendMessage(ChatColor.GRAY+"Jail location created");
 							plugin.getDatamap().Save(map2);
 						}
 						break;

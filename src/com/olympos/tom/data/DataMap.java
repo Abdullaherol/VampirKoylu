@@ -34,28 +34,30 @@ public class DataMap {
 	@SuppressWarnings("unchecked")
 	public void configTo() {
 		
-		for (String a : fileConfiguration.getConfigurationSection("").getKeys(false)) {
-			ArrayList<Door> doors = new ArrayList<Door>();
-			ArrayList<Location> doors2 = (ArrayList<Location>) fileConfiguration.getList(a+".Doors");
-			for (Location location : doors2) {
-				Door door = (Door) location.getBlock().getType().getNewData(location.getBlock().getData());
-				doors.add(door);
+		if (fileConfiguration.isConfigurationSection("")) {
+			for (String a : fileConfiguration.getConfigurationSection("").getKeys(false)) {
+				ArrayList<Door> doors = new ArrayList<Door>();
+				ArrayList<Location> doors2 = (ArrayList<Location>) fileConfiguration.getList(a+".Doors");
+				for (Location location : doors2) {
+					Door door = (Door) location.getBlock().getType().getNewData(location.getBlock().getData());
+					doors.add(door);
+				}
+				
+				ArrayList<Location> homesIn = (ArrayList<Location>) fileConfiguration.getList(a+".HomesIn");
+				ArrayList<Location> homesOut = (ArrayList<Location>) fileConfiguration.getList(a+".HomesOut");
+				ArrayList<Location> signs = (ArrayList<Location>) fileConfiguration.getList(a+".Signs");
+				Location hangLocation = (Location) fileConfiguration.get(a+".HangLocation");
+				Location jaiLocation = (Location) fileConfiguration.get(a+"JailLocation");
+				Map map = new Map(a);
+				map.setDoors(doors);
+				map.setDoorLocations(doors2);
+				map.setHangLocation(hangLocation);
+				map.setHomesIn(homesIn);
+				map.setHomesOut(homesOut);
+				map.setSigns(signs);
+				map.setJaiLocation(jaiLocation);
+				plugin.getMaps().put(a, map);
 			}
-			
-			ArrayList<Location> homesIn = (ArrayList<Location>) fileConfiguration.getList(a+".HomesIn");
-			ArrayList<Location> homesOut = (ArrayList<Location>) fileConfiguration.getList(a+".HomesOut");
-			ArrayList<Location> signs = (ArrayList<Location>) fileConfiguration.getList(a+".Signs");
-			Location hangLocation = (Location) fileConfiguration.get(a+".HangLocation");
-			Location jaiLocation = (Location) fileConfiguration.get(a+"JailLocation");
-			Map map = new Map(a);
-			map.setDoors(doors);
-			map.setDoorLocations(doors2);
-			map.setHangLocation(hangLocation);
-			map.setHomesIn(homesIn);
-			map.setHomesOut(homesOut);
-			map.setSigns(signs);
-			map.setJaiLocation(jaiLocation);
-			plugin.getMaps().put(a, map);
 		}
 	}
 	

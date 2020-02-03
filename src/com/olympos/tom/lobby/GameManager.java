@@ -57,6 +57,7 @@ public class GameManager extends BukkitRunnable{
 				if (dead) {
 					if (discussion) {
 						if (vote) {
+							
 							if (voteDead) {
 								if (night) {
 									//at finish night
@@ -74,13 +75,13 @@ public class GameManager extends BukkitRunnable{
 									
 									for (TPlayer eachTPlayer : lobby.getPlayers().values()) {
 										eachTPlayer.getPlayer().setPlayerTime(6000, false);
+										eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
 										if (!eachTPlayer.getRole().isDead()) {
 											eachTPlayer.getRole().setBlocked(false);
 											eachTPlayer.getRole().setHealed(false);
 											eachTPlayer.getRole().setBodyguard(null);
 											eachTPlayer.getRole().setJailed(false);
 											eachTPlayer.getRole().setTargetPlayer(null);
-											eachTPlayer.getPlayer().teleport(lobby.getMap().getHomesOut().get(eachTPlayer.getRole().getNo()));
 											for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 												if (!otherTPlayer.getRole().isDead()) {
 													eachTPlayer.getPlayer().showPlayer(otherTPlayer.getPlayer());
@@ -108,9 +109,16 @@ public class GameManager extends BukkitRunnable{
 												if (eachTPlayer.getRole().getRole()==Roles.Jailor) {
 													if (eachTPlayer.getRole().getTargetPlayer()!=null) {
 														eachTPlayer.getPlayer().teleport(lobby.getMap().getJaiLocation());
-														Player jailed = eachTPlayer.getRole().getTargetPlayer().getPlayer();
-														eachTPlayer.getPlayer().showPlayer(jailed);
-														jailed.showPlayer(eachTPlayer.getPlayer());
+														for (TPlayer tPlayer : lobby.getPlayers().values()) {
+															if (eachTPlayer!=tPlayer) {
+																if (!tPlayer.getRole().isJailed()) {
+																	eachTPlayer.getPlayer().hidePlayer(tPlayer.getPlayer());
+																}else {
+																	tPlayer.getPlayer().teleport(lobby.getMap().getJaiLocation());
+																	tPlayer.getPlayer().showPlayer(eachTPlayer.getPlayer());
+																}
+															}
+														}
 													}else {
 														for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 															if (!otherTPlayer.getRole().isDead()) {
@@ -124,7 +132,6 @@ public class GameManager extends BukkitRunnable{
 													for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
 														if (!otherTPlayer.getRole().isDead() && !otherTPlayer.getRole().isJailed()) {
 															if (otherTPlayer!=eachTPlayer) {
-																System.out.println("Town Hide");
 																eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
 															}
 														}
@@ -158,10 +165,17 @@ public class GameManager extends BukkitRunnable{
 													if (!otherTPlayer.getRole().isDead()) {
 														if (otherTPlayer!=eachTPlayer) {
 															if (otherTPlayer.getRole().getSide()!=Side.Mafia) {
-																System.out.println("Mafia Hide");
 																eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
 															}
 														}
+													}
+												}
+											}
+										}else {
+											for (TPlayer otherTPlayer : lobby.getPlayers().values()) {
+												if (!otherTPlayer.getRole().isDead() && !otherTPlayer.getRole().isJailed()) {
+													if (otherTPlayer!=eachTPlayer) {
+														eachTPlayer.getPlayer().hidePlayer(otherTPlayer.getPlayer());
 													}
 												}
 											}

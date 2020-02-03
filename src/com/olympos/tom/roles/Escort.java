@@ -13,12 +13,11 @@ import com.olympos.tom.properties.Side;
 
 public class Escort extends ARole{
 	
-
 	public Escort(int no, Roles role, int use, Chat chat, Dead deadType, Side side, boolean dead, boolean blocked,
 			boolean jailed, boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player, RoleTime roleTime,
-			TPlayer bodyguard, RoleQueue queue) {
+			TPlayer bodyguard, RoleQueue queue, TPlayer vote) {
 		super(no, role, use, chat, deadType, side, dead, blocked, jailed, healed, targetPlayer, roleType, player, roleTime,
-				bodyguard, queue);
+				bodyguard, queue, vote);
 		// TODO Auto-generated constructor stub
 	}
 

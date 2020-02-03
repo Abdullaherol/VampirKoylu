@@ -1,6 +1,7 @@
 package com.olympos.tom.roles;
 
 import org.bukkit.GameMode;
+import org.bukkit.block.Sign;
 
 import com.olympos.tom.object.TPlayer;
 import com.olympos.tom.properties.Chat;
@@ -10,6 +11,8 @@ import com.olympos.tom.properties.RoleTime;
 import com.olympos.tom.properties.RoleType;
 import com.olympos.tom.properties.Roles;
 import com.olympos.tom.properties.Side;
+
+import net.md_5.bungee.api.ChatColor;
 
 public abstract class ARole {
 	
@@ -29,9 +32,10 @@ public abstract class ARole {
 	private RoleTime roleTime;
 	private TPlayer bodyguard;
 	private RoleQueue queue;
+	private TPlayer vote;
 	
 	public ARole(int no, Roles role, int use ,Chat chat, Dead deadType, Side side, boolean dead, boolean blocked, boolean jailed,
-			boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player,RoleTime roleTime,TPlayer bodyguard,RoleQueue queue) {
+			boolean healed, TPlayer targetPlayer, RoleType roleType, TPlayer player,RoleTime roleTime,TPlayer bodyguard,RoleQueue queue,TPlayer vote) {
 		super();
 		this.no = no;
 		this.role = role;
@@ -49,12 +53,21 @@ public abstract class ARole {
 		this.roleTime = roleTime;
 		this.bodyguard = bodyguard;
 		this.queue = queue;
+		this.vote = vote;
 	}
 	
 	public void go(TPlayer tPlayer) {}
 	public void go(TPlayer tPlayer,TPlayer tPlayer2) {}
 	
 	
+	public TPlayer getVote() {
+		return vote;
+	}
+
+	public void setVote(TPlayer vote) {
+		this.vote = vote;
+	}
+
 	public RoleQueue getQueue() {
 		return queue;
 	}
@@ -133,6 +146,9 @@ public abstract class ARole {
 		if (dead) {
 			chat = Chat.dead;
 			player.getPlayer().setGameMode(GameMode.SPECTATOR);
+			Sign sign = (Sign)getPlayer().getActiveLobby().getMap().getSigns().get(getPlayer().getRole().getNo()).getBlock().getState();
+			sign.setLine(1, ChatColor.RED+"Dead");
+			player.getPlayer().sendTitle(ChatColor.RED+"You are dead", ChatColor.GRAY+";(", 1, 20, 1);
 		}
 	}
 	public boolean isBlocked() {

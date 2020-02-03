@@ -8,9 +8,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.olympos.tom.command.CPlay;
+import com.olympos.tom.command.CVote;
 import com.olympos.tom.data.DataMap;
 import com.olympos.tom.gui.LobbyGui;
+import com.olympos.tom.gui.MainGui;
 import com.olympos.tom.handler.MainHandler;
+import com.olympos.tom.command.CJailor;
 import com.olympos.tom.command.CMap;
 import com.olympos.tom.lobby.Lobby;
 import com.olympos.tom.map.Map;
@@ -34,6 +37,7 @@ public class Main extends JavaPlugin{
 	private ArrayList<Lobby> readyLobbies;
 	private LobbyGui lobbyGui;
 	private DataMap datamap;
+	private MainGui mainGui;
 	
 	@Override
 	public void onEnable() {
@@ -44,11 +48,14 @@ public class Main extends JavaPlugin{
 		datamap = new DataMap(this);
 		players = new HashMap<Player, TPlayer>();
 		lobbies = new HashMap<Player, ArrayList<Lobby>>();
-		lobbyGui = new LobbyGui(this);
 		readyLobbies = new ArrayList<Lobby>();
+		lobbyGui = new LobbyGui(this);
+		mainGui = new MainGui(this);
 		
 		Bukkit.getServer().getPluginCommand("map").setExecutor(new CMap(this));
 		Bukkit.getServer().getPluginCommand("play").setExecutor(new CPlay(this));
+		Bukkit.getServer().getPluginCommand("jailor").setExecutor(new CJailor(this));
+		Bukkit.getServer().getPluginCommand("vote").setExecutor(new CVote(this));
 		Bukkit.getServer().getPluginManager().registerEvents(new MainHandler(this),this);
 		super.onEnable();
 	}
@@ -61,6 +68,14 @@ public class Main extends JavaPlugin{
 			}
 		}
 		super.onDisable();
+	}
+
+	public MainGui getMainGui() {
+		return mainGui;
+	}
+
+	public void setMainGui(MainGui mainGui) {
+		this.mainGui = mainGui;
 	}
 
 	public HashMap<Player, TPlayer> getPlayers() {

@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import com.olympos.tom.lobby.Lobby;
 import com.olympos.tom.roles.ARole;
 
-public class TPlayer {
+public class  TPlayer{
 	
 	private Lobby activeLobby;
 	private Player player;

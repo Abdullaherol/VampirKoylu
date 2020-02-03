@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.olympos.tom.Main;
 import com.olympos.tom.object.TPlayer;
+import com.olympos.tom.properties.Roles;
 
 public class CJailor implements CommandExecutor{
 
@@ -34,16 +35,19 @@ public class CJailor implements CommandExecutor{
 				TPlayer tPlayer = plugin.getPlayers().get(player);
 				if (tPlayer.getActiveLobby()!=null) {
 					if (arg3.length==0) {
-						if (!tPlayer.getActiveLobby().getGameManager().isNight()) {
-							Inventory inventory = Bukkit.createInventory(null, 18,"Jailor");
-							for (TPlayer tPlayer2 : tPlayer.getActiveLobby().getPlayers().values()) {
-								if (!tPlayer2.getRole().isDead()) {
-									if (tPlayer.getRole().getTargetPlayer()==tPlayer2) {
-										ItemStack itemStack = createItem(tPlayer2.getPlayer().getName(), 1, Material.SKULL_ITEM, true, tPlayer2.getPlayer().getName());
-										inventory.addItem(itemStack);
-									}else {
-										ItemStack itemStack = createItem(tPlayer2.getPlayer().getName(), 1, Material.SKULL_ITEM, false, tPlayer2.getPlayer().getName());
-										inventory.addItem(itemStack);
+						if (tPlayer.getActiveLobby().getGameManager().isDiscussion()) {
+							if (tPlayer.getRole().getRole()==Roles.Jailor) {
+								Inventory inventory = Bukkit.createInventory(null, 18,"Jailor");
+								for (TPlayer tPlayer2 : tPlayer.getActiveLobby().getPlayers().values()) {
+									if (!tPlayer2.getRole().isDead()) {
+										if (tPlayer.getRole().getTargetPlayer()==tPlayer2) {
+											ItemStack itemStack = createItem(tPlayer2.getPlayer().getName(), 1, Material.SKULL_ITEM, true, tPlayer2.getPlayer().getName());
+											inventory.addItem(itemStack);
+										}else {
+											ItemStack itemStack = createItem(tPlayer2.getPlayer().getName(), 1, Material.SKULL_ITEM, false, tPlayer2.getPlayer().getName());
+											inventory.addItem(itemStack);
+										}
+										player.openInventory(inventory);
 									}
 								}
 							}
@@ -69,7 +73,7 @@ public class CJailor implements CommandExecutor{
 	
 	@SuppressWarnings("deprecation")
 	private ItemStack createItem(String name,int amount,Material material,boolean enc,String owner) {
-		ItemStack itemStack = new ItemStack(material,amount);
+		ItemStack itemStack = new ItemStack(material,amount,(byte)3);
 		ItemMeta itemMeta = itemStack.getItemMeta();
 		SkullMeta meta = (SkullMeta)itemMeta;
 		meta.setDisplayName(name);

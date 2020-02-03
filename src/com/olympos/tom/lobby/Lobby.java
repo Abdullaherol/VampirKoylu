@@ -13,6 +13,7 @@ public class Lobby {
 	private Main plugin;
 	private boolean started = false;
 	private HashMap<Player, TPlayer> players;
+	private ArrayList<Player> playerlist;
 	private int size = 0;
 	private Map map;
 	private ArrayList<Roles> selectedRoles;
@@ -27,10 +28,21 @@ public class Lobby {
 		this.plugin = plugin;
 		players =new HashMap<Player, TPlayer>();
 		selectedRoles =  new ArrayList<Roles>();
+		playerlist = new ArrayList<Player>();
 		
 	}
 	
 	
+	public ArrayList<Player> getPlayerlist() {
+		return playerlist;
+	}
+
+
+	public void setPlayerlist(ArrayList<Player> playerlist) {
+		this.playerlist = playerlist;
+	}
+
+
 	public boolean isFullmoon() {
 		return fullmoon;
 	}
@@ -103,10 +115,12 @@ public class Lobby {
 	public void playerJoin(TPlayer player) {
 		players.put(player.getPlayer(), player);
 		player.setActiveLobby(this);
+		playerlist.add(player.getPlayer());
 	}
 	public void playerQuit(TPlayer player) {
 		players.remove(player.getPlayer());
 		player.setActiveLobby(null);
+		playerlist.remove(player.getPlayer());
 	}
 
 
